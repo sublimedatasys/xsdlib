@@ -1,5 +1,5 @@
 {
-  "name": "xsdlib",
+  "name": "xsdlibrary",
   "version": "1.0.0",
   "description": "Xml Schema Library",
   "main": "index.js",

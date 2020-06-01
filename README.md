@@ -15,13 +15,13 @@ XML Schema library to convert XML to XSD (XML Schema) using pure javascript.
 npm
 
 ```sh
-$ npm install xsdlib
+$ npm install xsdlibrary
 ```
 
 yarn
 
 ```sh
-$ yarn add xsdlib
+$ yarn add xsdlibrary
 ```
 
 ### Usage
@@ -41,18 +41,5 @@ const xmlString = `<?xml version="1.0" encoding="UTF-8"?>
 
 const xmlSchema = xml2xsd(xmlString);
 console.log(xmlSchema);
-
 // returns xml schema
-/* <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:element name="note">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element type="xs:string" name="to"/>
-                <xs:element type="xs:string" name="from"/>
-                <xs:element type="xs:string" name="heading"/>
-                <xs:element type="xs:string" name="body"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-</xs:schema> */
 ```
