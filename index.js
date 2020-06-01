@@ -44,7 +44,7 @@ const OBJtoXSDElement = (obj) => {
 };
 
 exports.xml2xsd = (xmlString) => {
-  const jsonString = parser.toJson(xmlData);
+  const jsonString = parser.toJson(xmlString);
   const schema = toJsonSchema(JSON.parse(jsonString));
   return format(OBJtoXSDElement(schema));
 };
