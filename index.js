@@ -1,4 +1,4 @@
-const parser = require("xml2json");
+const parser = require("fast-xml-parser");
 const format = require("xml-formatter");
 const toJsonSchema = require("to-json-schema");
 
@@ -44,8 +44,8 @@ const OBJtoXSDElement = (obj) => {
 };
 
 exports.xml2xsd = (xmlString) => {
-  const jsonString = parser.toJson(xmlString);
-  const schema = toJsonSchema(JSON.parse(jsonString));
+  const jsonObj = parser.parse(xmlString, {});
+  const schema = toJsonSchema(jsonObj);
   return format(OBJtoXSDElement(schema));
 };
 
