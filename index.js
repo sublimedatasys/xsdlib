@@ -1,8 +1,6 @@
-const fs = require("fs");
 const parser = require("xml2json");
 const format = require("xml-formatter");
 const toJsonSchema = require("to-json-schema");
-const xmlData = fs.readFileSync(`${__dirname}/sample.xml`, "utf8");
 
 const generateObj = (keys, values, hasParent = true) => {
   let xml = "";
@@ -23,18 +21,6 @@ const generateObj = (keys, values, hasParent = true) => {
     } else if (type === "string") {
       xml += `<xs:element type="xs:string" name="${keys[key]}"/>`;
     }
-    //   if (typeof values[key] === "object") {
-    //     const keys2 = Object.keys(values[key]);
-    //     const values2 = Object.values(values[key]);
-    //     xml += `<xs:element name="${keys[key]}">`;
-    //     xml += generateObj(keys2, values2);
-    //     xml += `</xs:element>`;
-    //   } else {
-    //     xml += `<xs:element type="xs:${typeof keys[key]}" name="${keys[key]}"/>`;
-    //   }
-    // } else {
-    //   xml += `<xs:element type="xs:${typeof keys[key]}" name="${keys[key]}"/>`;
-    // }
   }
   if (hasParent) {
     xml += `</xs:sequence>`;
