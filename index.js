@@ -64,33 +64,43 @@ generateJson = (keys, values) => {
   let jsonString = ``;
   let key = values[0];
   if (keys[1] === "xs:complexType") {
-    const keys2 = Object.keys(values[1]["xs:sequence"]);
-    const values2 = Object.values(values[1]["xs:sequence"]);
-
-    jsonString += `,"properties":{
-      "${key}" : {
-        "type": "object",
-        "properties": {}
-      }
-     }`;
+    const keys2 = Object.keys(values[1]["xs:sequence"]["xs:element"]);
+    const values2 = Object.values(values[1]["xs:sequence"]["xs:element"]);
+    jsonString += `{"${values[0]}":{"type":"object","properties":${generateJson(keys2, values2)}}}`;
+  } else {
+    jsonString += "{";
+    if (values.length === 2 && typeof values[0] === "string") {
+      jsonString += `"${values[1]}":{"type":"${values[0].replace("xs:", "")}"}`;
+    } else {
+      values.forEach((d, index) => {
+        if (d["xs:complexType"]) {
+          const keys2 = Object.keys(d);
+          const values2 = Object.values(d);
+          jsonString += `"${d.attribute_name}":{"type":"object","properties":${generateJson(keys2, values2)}}`;
+        } else if (d.attribute_name && d.attribute_type) {
+          const coma = index !== values.length - 1;
+          jsonString += `"${d.attribute_name}":{"type":"${d.attribute_type.replace("xs:", "")}"}${coma ? "," : ""}`;
+        }
+      });
+    }
+    jsonString += "}";
   }
   return jsonString;
 };
 
 const xmlSchemaOBJtoJsonSchema = (jsonObj) => {
   let jsonString = "";
+  jsonString += `{"type":"object","properties":`;
   const parentObj = jsonObj["xs:schema"];
   if (parentObj) {
     const mainObj = parentObj["xs:element"];
     let keys = Object.keys(mainObj);
     let values = Object.values(mainObj);
-    jsonString += `{"type":"object"`;
     if (keys.length === 2) {
       jsonString += generateJson(keys, values);
     }
-    jsonString += `}`;
   }
-
+  jsonString += `}`;
   return JSON.parse(jsonString);
 };
 
@@ -109,9 +119,9 @@ exports.jsonSchema2xsd = (jsonSchema) => {
   return format(OBJtoXSDElement(jsonSchema));
 };
 
-exports.xsd2json = (xsdString) => {
+exports.xsd2jsonSchema = (xsdString) => {
   const jsonObj = parser.parse(xsdString, { ignoreAttributes: false, attributeNamePrefix: "attribute_" });
-  return beautify(xmlSchemaOBJtoJsonSchema(jsonObj));
+  return beautify(xmlSchemaOBJtoJsonSchema(jsonObj), null, 2, 100);
 };
 
 exports.validateXml = (string) => {

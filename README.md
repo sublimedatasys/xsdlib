@@ -29,7 +29,14 @@ $ yarn add xsdlibrary
 ### Usage
 
 ```js
-import { xml2xsd, json2xsd, validateXml, detectXmlSchema, jsonSchema2xsd } from xsdlib;
+import {
+    xml2xsd,
+    xsd2jsonSchema,
+    json2xsd,
+    validateXml,
+    detectXmlSchema,
+    jsonSchema2xsd
+} from xsdlib;
 ```
 
 Convert XML to XML Schema
@@ -37,6 +44,13 @@ Convert XML to XML Schema
 ```js
 const xmlString = ``; // your xml string
 xml2xsd(xmlString); // returns xml schema
+```
+
+Convert XML Schema to Json Schema
+
+```js
+const xsdString = ""; // your xml schema string
+xsd2jsonSchema(xsdString); // returns "xml" or "xsd" or an error object if none
 ```
 
 Convert JSON Schema to XML Schema
