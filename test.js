@@ -1,12 +1,20 @@
-const { xml2xsd } = require("./index");
+const { xml2xsd, detectXmlSchema, jsonSchema2xsd, xsd2json } = require("./index");
 
-const xmlData = `<?xml version="1.0" encoding="UTF-8"?>
+const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<main>
 <note>
 <to>Tove</to>
 <from>Jani</from>
 <heading>Reminder</heading>
-<body>Don't forget me this weekend!</body>
-</note>`;
+<body><section><h1>hello</h1></section></body>
+</note>
+<note>
+<to>Tove</to>
+<from>Jani</from>
+<heading>Reminder</heading>
+<body><section><h1>hello</h1></section></body>
+</note>
+</main>`;
 
-const xsd = xml2xsd(xmlData);
-console.log(xsd);
+// console.log(xsd2json(xml2xsd(xml)));
+console.log(xml2xsd(xml));

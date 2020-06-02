@@ -1,6 +1,6 @@
 {
   "name": "xsdlibrary",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Xml Schema Library",
   "main": "index.js",
   "scripts": {
@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "fast-xml-parser": "^3.17.3",
+    "json-beautify": "^1.1.1",
     "to-json-schema": "^0.2.5",
     "xml-formatter": "^2.1.0"
   }
