@@ -8,10 +8,6 @@ const generateObj = (keys, values, hasParent = true) => {
   if (hasParent) {
     xml += `<xs:complexType>`;
     xml += `<xs:sequence>`;
-  } else if (!hasParent && keys.length > 1) {
-    xml += `<xs:element name="root">`;
-    xml += `<xs:complexType>`;
-    xml += `<xs:sequence>`;
   }
 
   for (let key in keys) {
@@ -27,19 +23,21 @@ const generateObj = (keys, values, hasParent = true) => {
       const obj = values[key];
       const keys2 = Object.keys(obj.items);
       const values2 = Object.values(obj.items);
-      xml += `<xs:element name="${keys[key]}">`;
-      xml += generateObj(keys2, values2);
-      xml += `</xs:element>`;
+      if (keys2.length === 1 && values2.length === 1 && values2[0] !== "object") {
+        xml += `<xs:element type="xs:${values2[0]}" name="${keys2[0]}"/>`;
+      } else if (values2[0] === "object") {
+        const keys3 = Object.keys(values2[1]);
+        const values3 = Object.values(values2[1]);
+        xml += `<xs:element name="${keys3[0]}">`;
+        xml += generateObj(keys3, values3);
+        xml += `</xs:element>`;
+      }
     } else if (typeof type === "string" && type.length > 0) {
       xml += `<xs:element type="xs:${type}" name="${keys[key]}"/>`;
     }
   }
 
   if (hasParent) {
-    xml += `</xs:sequence>`;
-    xml += `</xs:complexType>`;
-  } else if (!hasParent && keys.length > 1) {
-    xml += `</xs:element>`;
     xml += `</xs:sequence>`;
     xml += `</xs:complexType>`;
   }
