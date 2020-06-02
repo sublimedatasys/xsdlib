@@ -36,7 +36,7 @@ import {
     validateXml,
     detectXmlSchema,
     jsonSchema2xsd
-} from xsdlib;
+} from xsdlibrary;
 ```
 
 Convert XML to XML Schema

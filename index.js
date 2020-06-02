@@ -8,6 +8,10 @@ const generateObj = (keys, values, hasParent = true) => {
   if (hasParent) {
     xml += `<xs:complexType>`;
     xml += `<xs:sequence>`;
+  } else if (!hasParent && keys.length > 1) {
+    xml += `<xs:element name="root">`;
+    xml += `<xs:complexType>`;
+    xml += `<xs:sequence>`;
   }
 
   for (let key in keys) {
@@ -40,6 +44,10 @@ const generateObj = (keys, values, hasParent = true) => {
   if (hasParent) {
     xml += `</xs:sequence>`;
     xml += `</xs:complexType>`;
+  } else if (!hasParent && keys.length > 1) {
+    xml += `</xs:element>`;
+    xml += `</xs:sequence>`;
+    xml += `</xs:complexType>`;
   }
 
   return xml;
@@ -64,7 +72,6 @@ generateJson = (keys, values, noParent = true) => {
   if (keys[1] === "xs:complexType") {
     const keys2 = Object.keys(values[1]["xs:sequence"]["xs:element"]);
     const values2 = Object.values(values[1]["xs:sequence"]["xs:element"]);
-
     jsonString += `{"${values[0]}":{"type":"object","properties":${generateJson(keys2, values2)}}}`;
   } else {
     jsonString += "{";
