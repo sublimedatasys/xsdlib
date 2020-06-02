@@ -58,12 +58,13 @@ const OBJtoXSDElement = (obj) => {
   return xml;
 };
 
-generateJson = (keys, values) => {
+generateJson = (keys, values, noParent = true) => {
   let jsonString = ``;
   let key = values[0];
   if (keys[1] === "xs:complexType") {
     const keys2 = Object.keys(values[1]["xs:sequence"]["xs:element"]);
     const values2 = Object.values(values[1]["xs:sequence"]["xs:element"]);
+
     jsonString += `{"${values[0]}":{"type":"object","properties":${generateJson(keys2, values2)}}}`;
   } else {
     jsonString += "{";
@@ -72,8 +73,8 @@ generateJson = (keys, values) => {
     } else {
       values.forEach((d, index) => {
         if (d["xs:complexType"]) {
-          const keys2 = Object.keys(d);
-          const values2 = Object.values(d);
+          const keys2 = Object.keys(d["xs:complexType"]["xs:sequence"]);
+          const values2 = Object.values(d["xs:complexType"]["xs:sequence"]);
           jsonString += `"${d.attribute_name}":{"type":"object","properties":${generateJson(keys2, values2)}}`;
         } else if (d.attribute_name && d.attribute_type) {
           const coma = index !== values.length - 1;
