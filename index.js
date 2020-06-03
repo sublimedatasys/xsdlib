@@ -136,7 +136,12 @@ exports.xsd2jsonSchema = (xsdString) => {
 };
 
 exports.validateXml = (string) => {
-  return parser.validate(string);
+  let response = parser.validate(string);
+  if (response === true) {
+    return true;
+  } else {
+    throw response.err;
+  }
 };
 
 exports.detectXmlSchema = (string) => {
@@ -144,5 +149,5 @@ exports.detectXmlSchema = (string) => {
     if (string.endsWith("</xs:schema>")) {
       return "xsd";
     } else return "xml";
-  } else return parser.validate(string);
+  } else throw parser.validate(string).err;
 };

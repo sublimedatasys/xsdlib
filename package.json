@@ -1,6 +1,6 @@
 {
   "name": "xsdlibrary",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Xml Schema Library",
   "main": "index.js",
   "scripts": {

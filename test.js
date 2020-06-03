@@ -1,4 +1,4 @@
-const { xml2xsd, detectXmlSchema, jsonSchema2xsd, xsd2jsonSchema } = require("./index");
+const { xml2xsd, detectXmlSchema, validateXml, jsonSchema2xsd, xsd2jsonSchema } = require("./index");
 
 const xml = `<?xml version="1.0" encoding="ISO-8859-1"?>  
 <note>  
@@ -8,4 +8,4 @@ const xml = `<?xml version="1.0" encoding="ISO-8859-1"?>
   <body>Don't forget me this weekend!</body>  
 </note>`;
 
-console.log(xml2xsd(xml));
+console.log(validateXml(xml));
