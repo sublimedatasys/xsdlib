@@ -5,11 +5,7 @@ const beautify = require("json-beautify");
 
 const generateObj = (keys, values, hasParent = true) => {
   let xml = "";
-  if (hasParent) {
-    xml += `<xs:complexType>`;
-    xml += `<xs:sequence>`;
-  } else if (!hasParent && keys.length > 1) {
-    xml += `<xs:element name="root">`;
+  if (!hasParent) {
     xml += `<xs:complexType>`;
     xml += `<xs:sequence>`;
   }
@@ -21,7 +17,7 @@ const generateObj = (keys, values, hasParent = true) => {
       const keys2 = Object.keys(obj.properties);
       const values2 = Object.values(obj.properties);
       xml += `<xs:element name="${keys[key]}">`;
-      xml += generateObj(keys2, values2);
+      xml += generateObj(keys2, values2, false);
       xml += `</xs:element>`;
     } else if (type === "array") {
       const obj = values[key];
@@ -33,7 +29,7 @@ const generateObj = (keys, values, hasParent = true) => {
         const keys3 = Object.keys(values2[1]);
         const values3 = Object.values(values2[1]);
         xml += `<xs:element name="${keys3[0]}">`;
-        xml += generateObj(keys3, values3);
+        xml += generateObj(keys3, values3, false);
         xml += `</xs:element>`;
       }
     } else if (typeof type === "string" && type.length > 0) {
@@ -41,11 +37,7 @@ const generateObj = (keys, values, hasParent = true) => {
     }
   }
 
-  if (hasParent) {
-    xml += `</xs:sequence>`;
-    xml += `</xs:complexType>`;
-  } else if (!hasParent && keys.length > 1) {
-    xml += `</xs:element>`;
+  if (!hasParent) {
     xml += `</xs:sequence>`;
     xml += `</xs:complexType>`;
   }
@@ -56,11 +48,23 @@ const generateObj = (keys, values, hasParent = true) => {
 const OBJtoXSDElement = (obj) => {
   let xml = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">`;
   const type = obj.type;
+
   if (type === "object") {
     const keys = Object.keys(obj.properties);
     const values = Object.values(obj.properties);
-    xml += generateObj(keys, values, false);
+    if (keys.length > 1) {
+      xml += `<xs:element name="root">`;
+      xml += `<xs:complexType>`;
+      xml += `<xs:sequence>`;
+    }
+    xml += generateObj(keys, values);
+    if (keys.length > 1) {
+      xml += `</xs:element>`;
+      xml += `</xs:sequence>`;
+      xml += `</xs:complexType>`;
+    }
   }
+
   xml += `</xs:schema>`;
   xml = xml.replace(/<\/?[0-9]{1,}>/g, "");
   return xml;
@@ -79,12 +83,13 @@ generateJson = (keys, values, noParent = true) => {
       jsonString += `"${values[1]}":{"type":"${values[0].replace("xs:", "")}"}`;
     } else {
       values.forEach((d, index) => {
+        const coma = index !== values.length - 1;
+
         if (d["xs:complexType"]) {
           const keys2 = Object.keys(d["xs:complexType"]["xs:sequence"]);
           const values2 = Object.values(d["xs:complexType"]["xs:sequence"]);
-          jsonString += `"${d.attribute_name}":{"type":"object","properties":${generateJson(keys2, values2)}}`;
+          jsonString += `"${d.attribute_name}":{"type":"object","properties":${generateJson(keys2, values2)}}${coma ? "," : ""}`;
         } else if (d.attribute_name && d.attribute_type) {
-          const coma = index !== values.length - 1;
           jsonString += `"${d.attribute_name}":{"type":"${d.attribute_type.replace("xs:", "")}"}${coma ? "," : ""}`;
         }
       });
