@@ -1,13 +1,31 @@
 {
   "name": "xsdlibrary",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Xml Schema Library",
   "main": "index.js",
   "scripts": {
     "test": "node test.js",
     "start": "node index.js"
   },
-  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sublimedatasys/xsdlib.git"
+  },
+  "keywords": [
+    "xsd",
+    "xml",
+    "xml schema",
+    "xml2xsd",
+    "xsd2xml",
+    "json2xml",
+    "json schema to xsd",
+    "json to xml",
+    "xml to xsd",
+    "xml to xml schema",
+    "coverter",
+    "xml library",
+    "xsd library"
+  ],
   "author": "Sublime Data Systems",
   "license": "ISC",
   "dependencies": {
