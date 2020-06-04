@@ -247,7 +247,6 @@ const generateSimpleContent = (d, coma) => {
   let ext = d["xs:simpleContent"]["xs:extension"];
   let attr = ext["xs:attribute"];
   let attrJson = "";
-  console.log(attr);
 
   if (Array.isArray(attr)) {
     attrJson = attr.length > 0 ? `,${attr.map((a) => `"${a.attribute_name}":"${a.attribute_default}"`)}` : "";
