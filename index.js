@@ -56,22 +56,30 @@ const generateComplexTypes = (keysExtra, valuesExtra, key, type) => {
   let descriptionAttribute = "";
 
   if (titleIndex !== -1) {
-    titleAttribute = `<xs:attribute default="${valuesExtra[titleIndex]}" name="title" type="xs:string"/>`;
+    let def = "";
+    if (valuesExtra[titleIndex]) {
+      def = `default="${valuesExtra[titleIndex]}"`;
+    }
+    titleAttribute = `<xs:attribute ${def} name="title" type="xs:string"/>`;
   }
 
   if (descriptionIndex !== -1) {
-    descriptionAttribute = `<xs:attribute default="${valuesExtra[descriptionIndex]}" name="description" type="xs:string"/>`;
+    let def = "";
+    if (valuesExtra[descriptionIndex]) {
+      def = `default="${valuesExtra[descriptionIndex]}"`;
+    }
+    descriptionAttribute = `<xs:attribute ${def} name="description" type="xs:string"/>`;
   }
 
   let xml = "";
-  xml += `<xs:element type="${type}" ${defaultAttr} name="${key}"><xs:simpleContent><xs:extension ${baseAttr}>`;
+  xml += `<xs:element type="xs:${type}" ${defaultAttr} name="${key}"><xs:simpleContent><xs:extension ${baseAttr}>`;
   if (titleAttribute !== "") xml += titleAttribute;
   if (descriptionAttribute !== "") xml += descriptionAttribute;
   xml += `</xs:extension></xs:simpleContent></xs:element>`;
   return xml;
 };
 
-const generateObj = (keys, values, hasParent = true) => {
+const generateObj = (keys, values, hasParent = true, name = "", { keysExtra, valuesExtra } = { keysExtra: [], valuesExtra: [] }) => {
   let xml = "";
   let xmlExtraTypes = "";
   if (!hasParent) {
@@ -79,48 +87,116 @@ const generateObj = (keys, values, hasParent = true) => {
     xml += `<xs:sequence>`;
   }
 
-  for (let key in keys) {
-    const type = values[key].type;
-    if (type === "object") {
-      const obj = values[key];
-      const keys2 = Object.keys(obj.properties);
-      const values2 = Object.values(obj.properties);
-      xml += `<xs:element name="${keys[key]}">`;
-      xml += generateObj(keys2, values2, false).xml;
-      xml += `</xs:element>`;
-    } else if (type === "array") {
-      const obj = values[key];
-      const keys2 = Object.keys(obj.items);
-      const values2 = Object.values(obj.items);
-      if (keys2.length === 1 && values2.length === 1 && values2[0] !== "object") {
-        xml += `<xs:element type="xs:${values2[0]}" name="${keys2[0]}"/>`;
-      } else if (values2[0] === "object") {
-        const keys3 = Object.keys(values2[1]);
-        const values3 = Object.values(values2[1]);
-        xml += `<xs:element name="${keys3[0]}">`;
-        xml += generateObj(keys3, values3, false).xml;
+  if (keys.indexOf("type") === -1) {
+    keys.forEach((d, key) => {
+      const type = values[key].type;
+      if (type === "object") {
+        const obj = values[key];
+        const keys2 = Object.keys(obj.properties);
+        const values2 = Object.values(obj.properties);
+        const keysExtra = Object.keys(obj);
+        const valuesExtra = Object.values(obj);
+        xml += `<xs:element name="${keys[key]}">`;
+        xml += generateObj(keys2, values2, false, null, { keysExtra, valuesExtra }).xml;
         xml += `</xs:element>`;
-      }
-    } else if (typeof type === "string" && type.length > 0) {
-      let keysExtra = Object.keys(values[key]);
-      let valuesExtra = Object.values(values[key]);
+      } else if (type === "array") {
+        // const obj = values[key];
+        // const keys2 = Object.keys(obj.items);
+        // const values2 = Object.values(obj.items);
+        // xml += `<xs:element array="1" name="${keys[key]}">`;
+        // xml += `<xs:complexType>`;
+        // xml += `<xs:sequence>`;
+        // if (keys2.length > 1 && values2.length > 1 && values2[keys2.indexOf("type")] !== "object") {
+        //   let keysExtra = keys2;
+        //   let valuesExtra = values2;
+        //   let defaultInline = "";
+        //   if (keysExtra.indexOf("default") !== -1) {
+        //     defaultInline = `default="${values[key].default}"`;
+        //   }
+        //   if (keysExtra.length > 1 && !(keysExtra.length === 2 && keysExtra[1] === "default")) {
+        //     xmlExtraTypes += generateExtraTypes(keysExtra, valuesExtra, `${keys[key]}_item`);
+        //     xml += generateComplexTypes(keysExtra, valuesExtra, `${keys[key]}_item`, type);
+        //   } else {
+        //     xml += `<xs:element ${defaultInline} type="xs:${type}" name="${keys[key]}"/>`;
+        //   }
+        // } else if (values2[0] === "object") {
+        //   const keys3 = Object.keys(values2[1]);
+        //   const values3 = Object.values(values2[1]);
+        //   if (keys3.length > 0) {
+        //     xml += `<xs:element name="${keys[key]}_item">`;
+        //     xml += generateObj(keys3, values3, false, `${keys[key]}_item`).xml;
+        //     xml += `</xs:element>`;
+        //   } else {
+        //     xml += `<xs:element name="${keys[key]}_item">`;
+        //     xml += generateObj(keys3, values3, false, `${keys[key]}_item`).xml;
+        //     xml += `</xs:element>`;
+        //   }
+        // } else {
+        //   xml += `<xs:element type="xs:${values2[0]}" name="${keys[key]}_item"/>`;
+        // }
+        // xml += `</xs:sequence>`;
+        // xml += `</xs:complexType>`;
+        // xml += `</xs:element>`;
+      } else if (typeof type === "string" && type.length > 0) {
+        let keysExtra = Object.keys(values[key]);
+        let valuesExtra = Object.values(values[key]);
 
-      let defaultInline = "";
-      if (keysExtra.indexOf("default") !== -1) {
-        defaultInline = `default="${values[key].default}"`;
-      }
+        let defaultInline = "";
+        if (keysExtra.indexOf("default") !== -1) {
+          defaultInline = `default="${values[key].default}"`;
+        }
 
-      if (keysExtra.length > 1 && !(keysExtra.length === 2 && keysExtra[1] === "default")) {
-        xmlExtraTypes += generateExtraTypes(keysExtra, valuesExtra, keys[key]);
-        xml += generateComplexTypes(keysExtra, valuesExtra, keys[key], type);
-      } else {
-        xml += `<xs:element ${defaultInline} type="xs:${type}" name="${keys[key]}"/>`;
+        if (keysExtra.length > 1 && !(keysExtra.length === 2 && keysExtra[1] === "default")) {
+          xmlExtraTypes += generateExtraTypes(keysExtra, valuesExtra, keys[key]);
+          xml += generateComplexTypes(keysExtra, valuesExtra, keys[key], type);
+        } else {
+          xml += `<xs:element ${defaultInline} type="xs:${type}" name="${keys[key]}"/>`;
+        }
       }
+    });
+  } else {
+    const type = values[keys.indexOf("type")];
+    let defaultInline = "";
+    if (keys.indexOf("default") !== -1) {
+      defaultInline = `default="${values[keys.indexOf("default")]}"`;
+    }
+
+    let keysExtra = keys;
+    let valuesExtra = values;
+
+    if (type === "string" && keys.length === 1) {
+      xml += `<xs:element ${defaultInline} type="xs:${type}" name="${name}_item"/>`;
+    } else if (type === "string" && keys.length > 1) {
+      xmlExtraTypes += generateExtraTypes(keysExtra, valuesExtra, name);
+      xml += generateComplexTypes(keysExtra, valuesExtra, name, type);
     }
   }
 
   if (!hasParent) {
+    let titleIndex = keysExtra.indexOf("title");
+    let titleAttribute = "";
+
+    let descriptionIndex = keysExtra.indexOf("description");
+    let descriptionAttribute = "";
+
+    if (titleIndex !== -1) {
+      let def = "";
+      if (valuesExtra[titleIndex]) {
+        def = `default="${valuesExtra[titleIndex]}"`;
+      }
+      titleAttribute = `<xs:attribute ${def} name="title" type="xs:string"/>`;
+    }
+
+    if (descriptionIndex !== -1) {
+      let def = "";
+      if (values[titleIndex]) {
+        def = `default="${values[titleIndex]}"`;
+      }
+      descriptionAttribute = `<xs:attribute ${def} name="description" type="xs:string"/>`;
+    }
     xml += `</xs:sequence>`;
+    xml += titleAttribute;
+    xml += descriptionAttribute;
     xml += `</xs:complexType>`;
   }
 
@@ -166,42 +242,83 @@ const OBJtoXSDElement = (obj) => {
   return xml;
 };
 
+const generateSimpleContent = (d, coma) => {
+  let jsonString = "";
+  let ext = d["xs:simpleContent"]["xs:extension"];
+  let attr = ext["xs:attribute"];
+  let attrJson = "";
+  console.log(attr);
+
+  if (Array.isArray(attr)) {
+    attrJson = attr.length > 0 ? `,${attr.map((a) => `"${a.attribute_name}":"${a.attribute_default}"`)}` : "";
+  } else if (attr.attribute_name) {
+    attrJson = `,"${attr.attribute_name}":"${attr.attribute_default}"`;
+  }
+
+  jsonString += `"${d.attribute_name}":{"type":"${d.attribute_type.replace("xs:", "")}"${attrJson}}${coma ? "," : ""}`;
+  return jsonString;
+};
+
 const generateJson = (keys, values, noParent = true) => {
   let jsonString = ``;
   let keyIndex = keys.indexOf("attribute_name");
   let complexTypeIndex = keys.indexOf("xs:complexType");
-
   if (complexTypeIndex !== -1) {
-    const keys2 = Object.keys(values[complexTypeIndex]["xs:sequence"]["xs:element"]);
-    const values2 = Object.values(values[complexTypeIndex]["xs:sequence"]["xs:element"]);
-    jsonString += `{"${values[keyIndex]}":{"type":"object","properties":${generateJson(keys2, values2)}}}`;
+    if (keys.indexOf("attribute_array") === -1) {
+      if (values[complexTypeIndex]["xs:sequence"]) {
+        const keys2 = Object.keys(values[complexTypeIndex]["xs:sequence"]["xs:element"]);
+        const values2 = Object.values(values[complexTypeIndex]["xs:sequence"]["xs:element"]);
+        jsonString += `{"${values[keyIndex]}":{"type":"object","properties":${generateJson(keys2, values2)}}}`;
+      } else {
+        jsonString += `{"${values[keyIndex]}":{"type":"object","properties":{}}}`;
+      }
+    } else {
+      const keys2 = Object.keys(values[complexTypeIndex]["xs:sequence"]["xs:element"]);
+      const values2 = Object.values(values[complexTypeIndex]["xs:sequence"]["xs:element"]);
+      if (values2[keys2.indexOf("attribute_type")] === "xs:string") {
+        jsonString += `{"${values[keyIndex]}":{"type":"array","items":{"type":"string"}}}`;
+      } else {
+        if (keys2.indexOf("xs:complexType") !== -1) {
+          const keys3 = Object.keys(values2[keys2.indexOf("xs:complexType")]["xs:sequence"]);
+          const values3 = Object.values(values2[keys2.indexOf("xs:complexType")]["xs:sequence"]);
+          jsonString += `{"${values[keys.indexOf("attribute_name")]}":{"type":"array","items":{"type":"object","properties":${generateJson(keys3, values3)}}}}`;
+        }
+      }
+    }
   } else {
     jsonString += "{";
     if (values.length === 2 && typeof values[0] === "string") {
-      jsonString += `"${values[1]}":{"type":"${values[keyIndex].replace("xs:", "")}"}`;
+      jsonString += `"${values[1]}":{"type":"${values[0].replace("xs:", "")}"}`;
     } else {
-      values.forEach((d, index) => {
-        const coma = index !== values.length - 1;
-        if (d["xs:complexType"]) {
-          const keys2 = Object.keys(d["xs:complexType"]["xs:sequence"]);
-          const values2 = Object.values(d["xs:complexType"]["xs:sequence"]);
-          jsonString += `"${d.attribute_name}":{"type":"object","properties":${generateJson(keys2, values2)}}${coma ? "," : ""}`;
-        } else if (d["xs:simpleContent"]) {
-          let ext = d["xs:simpleContent"]["xs:extension"];
-          let attr = ext["xs:attribute"];
-          let attrJson = "";
-
-          if (Array.isArray(attr)) {
-            attrJson = attr.length > 0 ? `,${attr.map((a) => `"${a.attribute_name}":"${a.attribute_default}"`)}` : "";
-          } else if (attr.attribute_name) {
-            attrJson = `,"${attr.attribute_name}":"${attr.attribute_default}"`;
+      if (keys.indexOf("xs:simpleContent") !== -1) {
+        let obj = {};
+        keys.forEach((d) => {
+          obj[d] = values[keys.indexOf(d)];
+        });
+        jsonString += generateSimpleContent(obj);
+      } else {
+        values.forEach((d, index) => {
+          const coma = index !== values.length - 1;
+          if (d["xs:complexType"]) {
+            const keys2 = Object.keys(d["xs:complexType"]["xs:sequence"]);
+            const values2 = Object.values(d["xs:complexType"]["xs:sequence"]);
+            jsonString += `"${d.attribute_name}":{"type":"object","properties":${generateJson(keys2, values2)}}${coma ? "," : ""}`;
+          } else if (Array.isArray(d)) {
+            d.forEach((d1, index) => {
+              const coma2 = index !== d.length - 1;
+              if (d1["xs:simpleContent"]) {
+                jsonString += generateSimpleContent(d1, coma2);
+              } else {
+                jsonString += `"${d1.attribute_name}":{"type":"${d1.attribute_type.replace("xs:", "")}"}${coma2 ? "," : ""}`;
+              }
+            });
+          } else if (d["xs:simpleContent"]) {
+            jsonString += generateSimpleContent(d, coma);
+          } else if (d.attribute_name && d.attribute_type) {
+            jsonString += `"${d.attribute_name}":{"type":"${d.attribute_type.replace("xs:", "")}"}${coma ? "," : ""}`;
           }
-
-          jsonString += `"${d.attribute_name}":{"type":"${d.attribute_type}"${attrJson}}${coma ? "," : ""}`;
-        } else if (d.attribute_name && d.attribute_type) {
-          jsonString += `"${d.attribute_name}":{"type":"${d.attribute_type.replace("xs:", "")}"}${coma ? "," : ""}`;
-        }
-      });
+        });
+      }
     }
     jsonString += "}";
   }
@@ -214,14 +331,20 @@ const xmlSchemaOBJtoJsonSchema = (jsonObj) => {
   const parentObj = jsonObj["xs:schema"];
   if (parentObj) {
     const mainObj = parentObj["xs:element"];
-    let keys = Object.keys(mainObj);
-    let values = Object.values(mainObj);
-    if (keys.length >= 2) {
-      jsonString += generateJson(keys, values);
+
+    if (mainObj) {
+      let keys = Object.keys(mainObj);
+      let values = Object.values(mainObj);
+      if (keys.length >= 2) {
+        jsonString += generateJson(keys, values);
+      }
+    } else {
+      jsonString += `{}`;
     }
   }
   jsonString += `}`;
-  return JSON.parse(jsonString);
+  const json = JSON.parse(jsonString);
+  return json.properties && json.properties.root ? json.properties.root : json;
 };
 
 exports.xml2xsd = (xmlString) => {
