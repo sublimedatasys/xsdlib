@@ -366,7 +366,7 @@ const xmlSchemaOBJtoJsonSchema = (jsonObj) => {
 };
 
 exports.xml2xsd = (xmlString) => {
-  const jsonObj = parser.parse(xmlString, { ignoreAttributes: false, attributeNamePrefix: "attribute_" });
+  const jsonObj = parser.parse(xmlString, { ignoreAttributes: true, attributeNamePrefix: "attribute_" });
   const schema = toJsonSchema(jsonObj);
   return format(OBJtoXSDElement(schema));
 };
