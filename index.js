@@ -4,6 +4,25 @@ const toJsonSchema = require("to-json-schema");
 const beautify = require("json-beautify");
 const _ = require("lodash");
 
+const primaryAttributes = [
+  "minLength",
+  "maxLength",
+  "default",
+  "pattern",
+  "type",
+  "enum",
+  "properties",
+  "format",
+  "enumDesc",
+  "exclusiveMinimum",
+  "exclusiveMaximum",
+  "minimum",
+  "maximum",
+  "uniqueItems",
+  "minItems",
+  "maxItems",
+];
+
 const generateExtraTypes = (keysExtra, valuesExtra, key) => {
   let xmlExtraTypes = "";
   let minLengthIndex = keysExtra.indexOf("minLength");
@@ -42,24 +61,6 @@ const generateComplexTypes = (keysExtra, valuesExtra, key, type) => {
   const keysExtra2 = []; //keysExtra.slice();
   const valuesExtra2 = []; //valuesExtra.slice();
 
-  const primaryAttributes = [
-    "minLength",
-    "maxLength",
-    "default",
-    "pattern",
-    "type",
-    "enum",
-    "format",
-    "enumDesc",
-    "exclusiveMinimum",
-    "exclusiveMaximum",
-    "minimum",
-    "maximum",
-    "uniqueItems",
-    "minItems",
-    "maxItems",
-  ];
-
   keysExtra.forEach((k, index) => {
     if (primaryAttributes.indexOf(k) === -1) {
       keysExtra2.push(k);
@@ -78,32 +79,10 @@ const generateComplexTypes = (keysExtra, valuesExtra, key, type) => {
     defaultAttr = `default="${valuesExtra[defaultIndex]}"`;
   }
 
-  // let titleIndex = keysExtra.indexOf("title");
-  // let titleAttribute = "";
-
-  // let descriptionIndex = keysExtra.indexOf("description");
-  // let descriptionAttribute = "";
-
-  // if (titleIndex !== -1) {
-  //   let def = "";
-  //   if (valuesExtra[titleIndex]) {
-  //     def = `default="${valuesExtra[titleIndex]}"`;
-  //   }
-  //   titleAttribute = `<xs:attribute ${def} name="title" type="xs:string"/>`;
-  // }
-
-  // if (descriptionIndex !== -1) {
-  //   let def = "";
-  //   if (valuesExtra[descriptionIndex]) {
-  //     def = `default="${valuesExtra[descriptionIndex]}"`;
-  //   }
-  //   descriptionAttribute = `<xs:attribute ${def} name="description" type="xs:string"/>`;
-  // }
-
   let xml = "";
   xml += `<xs:element type="xs:${type}" ${defaultAttr} name="${key}"><xs:simpleContent><xs:extension ${baseAttr}>`;
-  keysExtra2.forEach((d) => {
-    xml += `<xs:attribute name="${d.replace("attribute_", "")}" type="xs:string"/>`;
+  keysExtra2.forEach((d, index) => {
+    xml += `<xs:attribute default="${valuesExtra2[index]}" name="${d.replace("attribute_", "")}" type="xs:string"/>`;
   });
   xml += `</xs:extension></xs:simpleContent></xs:element>`;
   return xml;
@@ -137,50 +116,21 @@ const generateObj = (keys, values, hasParent = true, name = "", { keysExtra, val
         const obj = values[key];
         const keys2 = Object.keys(obj.properties);
         const values2 = Object.values(obj.properties);
-
         const keysExtra = Object.keys(obj);
         const valuesExtra = Object.values(obj);
         xml += `<xs:element name="${keys[key]}">`;
         xml += generateObj(keys2, values2, false, null, { keysExtra, valuesExtra }).xml;
         xml += `</xs:element>`;
       } else if (type === "array") {
-        // const obj = values[key];
-        // const keys2 = Object.keys(obj.items);
-        // const values2 = Object.values(obj.items);
-        // xml += `<xs:element array="1" name="${keys[key]}">`;
-        // xml += `<xs:complexType>`;
-        // xml += `<xs:sequence>`;
-        // if (keys2.length > 1 && values2.length > 1 && values2[keys2.indexOf("type")] !== "object") {
-        //   let keysExtra = keys2;
-        //   let valuesExtra = values2;
-        //   let defaultInline = "";
-        //   if (keysExtra.indexOf("default") !== -1) {
-        //     defaultInline = `default="${values[key].default}"`;
-        //   }
-        //   if (keysExtra.length > 1 && !(keysExtra.length === 2 && keysExtra[1] === "default")) {
-        //     xmlExtraTypes += generateExtraTypes(keysExtra, valuesExtra, `${keys[key]}_item`);
-        //     xml += generateComplexTypes(keysExtra, valuesExtra, `${keys[key]}_item`, type);
-        //   } else {
-        //     xml += `<xs:element ${defaultInline} type="xs:${type}" name="${keys[key]}"/>`;
-        //   }
-        // } else if (values2[0] === "object") {
-        //   const keys3 = Object.keys(values2[1]);
-        //   const values3 = Object.values(values2[1]);
-        //   if (keys3.length > 0) {
-        //     xml += `<xs:element name="${keys[key]}_item">`;
-        //     xml += generateObj(keys3, values3, false, `${keys[key]}_item`).xml;
-        //     xml += `</xs:element>`;
-        //   } else {
-        //     xml += `<xs:element name="${keys[key]}_item">`;
-        //     xml += generateObj(keys3, values3, false, `${keys[key]}_item`).xml;
-        //     xml += `</xs:element>`;
-        //   }
-        // } else {
-        //   xml += `<xs:element type="xs:${values2[0]}" name="${keys[key]}_item"/>`;
-        // }
-        // xml += `</xs:sequence>`;
-        // xml += `</xs:complexType>`;
-        // xml += `</xs:element>`;
+        const obj = values[key];
+        const keys2 = Object.keys(obj.items);
+        const values2 = Object.values(obj.items);
+
+        const keysExtra = Object.keys(obj);
+        const valuesExtra = Object.values(obj);
+        xml += `<xs:element name="${keys[key]}">`;
+        xml += generateObj(keys2, values2, false, null, { keysExtra, valuesExtra }).xml;
+        xml += `</xs:element>`;
       } else if (typeof type === "string" && type.length > 0) {
         let keysExtra = Object.keys(values[key]);
         let valuesExtra = Object.values(values[key]);
@@ -229,27 +179,11 @@ const generateObj = (keys, values, hasParent = true, name = "", { keysExtra, val
   }
 
   if (!hasParent) {
-    let titleIndex = keysExtra.indexOf("title");
-    let titleAttribute = "";
-
-    let descriptionIndex = keysExtra.indexOf("description");
-    let descriptionAttribute = "";
-
-    if (titleIndex !== -1) {
-      let def = "";
-      if (valuesExtra[titleIndex]) {
-        def = `default="${valuesExtra[titleIndex]}"`;
+    keysExtra.forEach((d) => {
+      if (primaryAttributes.indexOf(d) === -1) {
+        attributes.push(d);
       }
-      titleAttribute = `<xs:attribute ${def} name="title" type="xs:string"/>`;
-    }
-
-    if (descriptionIndex !== -1) {
-      let def = "";
-      if (values[titleIndex]) {
-        def = `default="${values[titleIndex]}"`;
-      }
-      descriptionAttribute = `<xs:attribute ${def} name="description" type="xs:string"/>`;
-    }
+    });
 
     if (attributes.length > 0 && keys.indexOf("extension") !== -1) {
       xml += ` </xs:simpleContent>`;
@@ -257,12 +191,12 @@ const generateObj = (keys, values, hasParent = true, name = "", { keysExtra, val
     } else {
       xml += `</xs:sequence>`;
       if (attributes.length > 0) {
-        attributes.forEach((attr) => {
-          xml += `<xs:attribute name="${attr.replace("attribute_", "")}" type="xs:string"/>`;
+        attributes.forEach((attr, index) => {
+          if (attr.indexOf("xsi") === -1) {
+            xml += `<xs:attribute default="${valuesExtra[keysExtra.indexOf(attr)]}" name="${attr.replace("attribute_", "")}" type="xs:string"/>`;
+          }
         });
       }
-      xml += titleAttribute;
-      xml += descriptionAttribute;
       xml += `</xs:complexType>`;
     }
   }
@@ -440,17 +374,11 @@ const xmlSchemaOBJtoJsonSchema = (jsonObj) => {
   return json.properties && json.properties.root ? json.properties.root : json;
 };
 
-const generateAttributeSchema = (jsonObj) => {
-  // console.log(beautify(jsonObj, null, 2, 100));
-  // const jsonObjFinal = itterateObj(jsonObj);
-  return jsonObj;
-};
-
 exports.xml2xsd = (xmlString) => {
   const jsonObj = parser.parse(xmlString, { ignoreAttributes: false, textNodeName: "extension", attributeNamePrefix: "attribute_" });
-  const schema = toJsonSchema(jsonObj);
-  const schema2 = generateAttributeSchema(schema);
-  return format(OBJtoXSDElement(schema2));
+  const schema = toJsonSchema(jsonObj, { arrays: { mode: "tuple" } });
+  console.log(beautify(schema, null, 2, 200));
+  return format(OBJtoXSDElement(schema));
 };
 
 exports.json2xsd = (jsonObj) => {
