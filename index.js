@@ -39,6 +39,34 @@ const generateComplexTypes = (keysExtra, valuesExtra, key, type) => {
   let maxLengthIndex = keysExtra.indexOf("maxLength");
   let defaultIndex = keysExtra.indexOf("default");
 
+  const keysExtra2 = []; //keysExtra.slice();
+  const valuesExtra2 = []; //valuesExtra.slice();
+
+  const primaryAttributes = [
+    "minLength",
+    "maxLength",
+    "default",
+    "pattern",
+    "type",
+    "enum",
+    "format",
+    "enumDesc",
+    "exclusiveMinimum",
+    "exclusiveMaximum",
+    "minimum",
+    "maximum",
+    "uniqueItems",
+    "minItems",
+    "maxItems",
+  ];
+
+  keysExtra.forEach((k, index) => {
+    if (primaryAttributes.indexOf(k) === -1) {
+      keysExtra2.push(k);
+      valuesExtra2.push(valuesExtra[index]);
+    }
+  });
+
   let baseAttr = "";
   let defaultAttr = "";
 
@@ -50,32 +78,33 @@ const generateComplexTypes = (keysExtra, valuesExtra, key, type) => {
     defaultAttr = `default="${valuesExtra[defaultIndex]}"`;
   }
 
-  let titleIndex = keysExtra.indexOf("title");
-  let titleAttribute = "";
+  // let titleIndex = keysExtra.indexOf("title");
+  // let titleAttribute = "";
 
-  let descriptionIndex = keysExtra.indexOf("description");
-  let descriptionAttribute = "";
+  // let descriptionIndex = keysExtra.indexOf("description");
+  // let descriptionAttribute = "";
 
-  if (titleIndex !== -1) {
-    let def = "";
-    if (valuesExtra[titleIndex]) {
-      def = `default="${valuesExtra[titleIndex]}"`;
-    }
-    titleAttribute = `<xs:attribute ${def} name="title" type="xs:string"/>`;
-  }
+  // if (titleIndex !== -1) {
+  //   let def = "";
+  //   if (valuesExtra[titleIndex]) {
+  //     def = `default="${valuesExtra[titleIndex]}"`;
+  //   }
+  //   titleAttribute = `<xs:attribute ${def} name="title" type="xs:string"/>`;
+  // }
 
-  if (descriptionIndex !== -1) {
-    let def = "";
-    if (valuesExtra[descriptionIndex]) {
-      def = `default="${valuesExtra[descriptionIndex]}"`;
-    }
-    descriptionAttribute = `<xs:attribute ${def} name="description" type="xs:string"/>`;
-  }
+  // if (descriptionIndex !== -1) {
+  //   let def = "";
+  //   if (valuesExtra[descriptionIndex]) {
+  //     def = `default="${valuesExtra[descriptionIndex]}"`;
+  //   }
+  //   descriptionAttribute = `<xs:attribute ${def} name="description" type="xs:string"/>`;
+  // }
 
   let xml = "";
   xml += `<xs:element type="xs:${type}" ${defaultAttr} name="${key}"><xs:simpleContent><xs:extension ${baseAttr}>`;
-  if (titleAttribute !== "") xml += titleAttribute;
-  if (descriptionAttribute !== "") xml += descriptionAttribute;
+  keysExtra2.forEach((d) => {
+    xml += `<xs:attribute name="${d.replace("attribute_", "")}" type="xs:string"/>`;
+  });
   xml += `</xs:extension></xs:simpleContent></xs:element>`;
   return xml;
 };
@@ -318,7 +347,7 @@ const generateJson = (keys, values, restrictions = {}, attributes = []) => {
       if (values[complexTypeIndex]["xs:sequence"]) {
         const keys2 = Object.keys(values[complexTypeIndex]["xs:sequence"]["xs:element"]);
         const values2 = Object.values(values[complexTypeIndex]["xs:sequence"]["xs:element"]);
-        jsonString += `{"${values[keyIndex]}":{"type":"object","properties":${generateJson(keys2, values2, restrictions)},${attributes.map(
+        jsonString += `{"${values[keyIndex]}":{"type":"object","properties":${generateJson(keys2, values2, restrictions)}${attributes.length > 0 ? "," : ""}${attributes.map(
           (d, i) => `"${d.attribute_name}":""${attributes.length - 1 === i ? "" : ""}`
         )}}}`;
       } else {
