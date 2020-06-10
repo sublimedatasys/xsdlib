@@ -2,6 +2,7 @@ const parser = require("fast-xml-parser");
 const format = require("xml-formatter");
 const toJsonSchema = require("to-json-schema");
 const beautify = require("json-beautify");
+const _ = require("lodash");
 
 const generateExtraTypes = (keysExtra, valuesExtra, key) => {
   let xmlExtraTypes = "";
@@ -82,9 +83,22 @@ const generateComplexTypes = (keysExtra, valuesExtra, key, type) => {
 const generateObj = (keys, values, hasParent = true, name = "", { keysExtra, valuesExtra } = { keysExtra: [], valuesExtra: [] }) => {
   let xml = "";
   let xmlExtraTypes = "";
+  let attributes = [];
   if (!hasParent) {
-    xml += `<xs:complexType>`;
-    xml += `<xs:sequence>`;
+    keys.forEach((k, i) => {
+      if (k.indexOf("attribute_") !== -1) {
+        attributes.push(k);
+        delete keys[i];
+        delete values[i];
+      }
+    });
+    if (attributes.length > 0 && keys.indexOf("extension") !== -1) {
+      xml += `<xs:complexType>`;
+      xml += ` <xs:simpleContent>`;
+    } else {
+      xml += `<xs:complexType>`;
+      xml += `<xs:sequence>`;
+    }
   }
 
   if (keys.indexOf("type") === -1) {
@@ -94,6 +108,7 @@ const generateObj = (keys, values, hasParent = true, name = "", { keysExtra, val
         const obj = values[key];
         const keys2 = Object.keys(obj.properties);
         const values2 = Object.values(obj.properties);
+
         const keysExtra = Object.keys(obj);
         const valuesExtra = Object.values(obj);
         xml += `<xs:element name="${keys[key]}">`;
@@ -150,7 +165,19 @@ const generateObj = (keys, values, hasParent = true, name = "", { keysExtra, val
           xmlExtraTypes += generateExtraTypes(keysExtra, valuesExtra, keys[key]);
           xml += generateComplexTypes(keysExtra, valuesExtra, keys[key], type);
         } else {
-          xml += `<xs:element ${defaultInline} type="xs:${type}" name="${keys[key]}"/>`;
+          if (keys[key] !== "extension") {
+            xml += `<xs:element ${defaultInline} type="xs:${type}" name="${keys[key]}"/>`;
+          } else {
+            if (attributes.length > 0) {
+              xml += `<xs:extension base="xs:${type}">`;
+              attributes.forEach((d) => {
+                xml += `<xs:attribute name="${d.replace("attribute_", "")}" type="xs:string"/>`;
+              });
+              xml += `</xs:extension>`;
+            } else {
+              xml += `<xs:extension base="xs:${type}"/>`;
+            }
+          }
         }
       }
     });
@@ -194,10 +221,21 @@ const generateObj = (keys, values, hasParent = true, name = "", { keysExtra, val
       }
       descriptionAttribute = `<xs:attribute ${def} name="description" type="xs:string"/>`;
     }
-    xml += `</xs:sequence>`;
-    xml += titleAttribute;
-    xml += descriptionAttribute;
-    xml += `</xs:complexType>`;
+
+    if (attributes.length > 0 && keys.indexOf("extension") !== -1) {
+      xml += ` </xs:simpleContent>`;
+      xml += `</xs:complexType>`;
+    } else {
+      xml += `</xs:sequence>`;
+      if (attributes.length > 0) {
+        attributes.forEach((attr) => {
+          xml += `<xs:attribute name="${attr.replace("attribute_", "")}" type="xs:string"/>`;
+        });
+      }
+      xml += titleAttribute;
+      xml += descriptionAttribute;
+      xml += `</xs:complexType>`;
+    }
   }
 
   return { xml, xmlExtraTypes };
@@ -250,10 +288,12 @@ const generateSimpleContent = (d, coma = false, restrictions = {}) => {
   let minLength = "";
   let maxLength = "";
 
+  let type = d.attribute_type ? d.attribute_type : "";
+
   if (Array.isArray(attr)) {
-    attrJson = attr.length > 0 ? `,${attr.map((a) => `"${a.attribute_name}":"${a.attribute_default}"`)}` : "";
+    attrJson = attr.length > 0 ? `,${attr.map((a) => `"${a.attribute_name}":"${a.attribute_default || ""}"`)}` : "";
   } else if (attr.attribute_name) {
-    attrJson = `,"${attr.attribute_name}":"${attr.attribute_default}"`;
+    attrJson = `,"${attr.attribute_name}":"${attr.attribute_default || ""}"`;
   }
 
   if (ext.attribute_base) {
@@ -265,11 +305,11 @@ const generateSimpleContent = (d, coma = false, restrictions = {}) => {
     }
   }
 
-  jsonString += `"${d.attribute_name}":{"type":"${d.attribute_type.replace("xs:", "")}"${attrJson}}${coma ? "," : ""}`;
+  jsonString += `"${d.attribute_name}":{"type":"${type.replace("xs:", "")}"${attrJson}}${coma ? "," : ""}`;
   return jsonString;
 };
 
-const generateJson = (keys, values, restrictions) => {
+const generateJson = (keys, values, restrictions = {}, attributes = []) => {
   let jsonString = ``;
   let keyIndex = keys.indexOf("attribute_name");
   let complexTypeIndex = keys.indexOf("xs:complexType");
@@ -278,7 +318,9 @@ const generateJson = (keys, values, restrictions) => {
       if (values[complexTypeIndex]["xs:sequence"]) {
         const keys2 = Object.keys(values[complexTypeIndex]["xs:sequence"]["xs:element"]);
         const values2 = Object.values(values[complexTypeIndex]["xs:sequence"]["xs:element"]);
-        jsonString += `{"${values[keyIndex]}":{"type":"object","properties":${generateJson(keys2, values2, restrictions)}}}`;
+        jsonString += `{"${values[keyIndex]}":{"type":"object","properties":${generateJson(keys2, values2, restrictions)},${attributes.map(
+          (d, i) => `"${d.attribute_name}":""${attributes.length - 1 === i ? "" : ""}`
+        )}}}`;
       } else {
         jsonString += `{"${values[keyIndex]}":{"type":"object","properties":{}}}`;
       }
@@ -309,7 +351,7 @@ const generateJson = (keys, values, restrictions) => {
       } else {
         values.forEach((d, index) => {
           const coma = index !== values.length - 1;
-          if (d["xs:complexType"]) {
+          if (d["xs:complexType"] && d["xs:complexType"]["xs:sequence"]) {
             const keys2 = Object.keys(d["xs:complexType"]["xs:sequence"]);
             const values2 = Object.values(d["xs:complexType"]["xs:sequence"]);
             jsonString += `"${d.attribute_name}":{"type":"object","properties":${generateJson(keys2, values2, restrictions)}}${coma ? "," : ""}`;
@@ -322,6 +364,9 @@ const generateJson = (keys, values, restrictions) => {
                 jsonString += `"${d1.attribute_name}":{"type":"${d1.attribute_type.replace("xs:", "")}"}${coma2 ? "," : ""}`;
               }
             });
+          } else if (d["xs:complexType"] && d["xs:complexType"]["xs:simpleContent"]) {
+            d["xs:complexType"].attribute_name = d.attribute_name;
+            jsonString += generateSimpleContent(d["xs:complexType"], coma, restrictions);
           } else if (d["xs:simpleContent"]) {
             jsonString += generateSimpleContent(d, coma, restrictions);
           } else if (d.attribute_name && d.attribute_type) {
@@ -330,7 +375,7 @@ const generateJson = (keys, values, restrictions) => {
         });
       }
     }
-    jsonString += "}";
+    jsonString += `}`;
   }
   return jsonString;
 };
@@ -349,12 +394,13 @@ const xmlSchemaOBJtoJsonSchema = (jsonObj) => {
   });
   if (parentObj) {
     const mainObj = parentObj["xs:element"];
-
+    const attributes = mainObj["xs:complexType"] && mainObj["xs:complexType"]["xs:attribute"];
     if (mainObj) {
       let keys = Object.keys(mainObj);
       let values = Object.values(mainObj);
+
       if (keys.length >= 2) {
-        jsonString += generateJson(keys, values, restrictions);
+        jsonString += generateJson(keys, values, restrictions, attributes);
       }
     } else {
       jsonString += `{}`;
@@ -365,10 +411,17 @@ const xmlSchemaOBJtoJsonSchema = (jsonObj) => {
   return json.properties && json.properties.root ? json.properties.root : json;
 };
 
+const generateAttributeSchema = (jsonObj) => {
+  // console.log(beautify(jsonObj, null, 2, 100));
+  // const jsonObjFinal = itterateObj(jsonObj);
+  return jsonObj;
+};
+
 exports.xml2xsd = (xmlString) => {
-  const jsonObj = parser.parse(xmlString, { ignoreAttributes: true, attributeNamePrefix: "attribute_" });
+  const jsonObj = parser.parse(xmlString, { ignoreAttributes: false, textNodeName: "extension", attributeNamePrefix: "attribute_" });
   const schema = toJsonSchema(jsonObj);
-  return format(OBJtoXSDElement(schema));
+  const schema2 = generateAttributeSchema(schema);
+  return format(OBJtoXSDElement(schema2));
 };
 
 exports.json2xsd = (jsonObj) => {
@@ -382,6 +435,7 @@ exports.jsonSchema2xsd = (jsonSchema) => {
 
 exports.xsd2jsonSchema = (xsdString) => {
   const jsonObj = parser.parse(xsdString, { ignoreAttributes: false, attributeNamePrefix: "attribute_" });
+  // console.log(jsonObj);
   return beautify(xmlSchemaOBJtoJsonSchema(jsonObj), null, 2, 100);
 };
 
