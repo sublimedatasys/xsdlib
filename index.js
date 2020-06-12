@@ -13,6 +13,7 @@ const primaryAttributes = [
   "enum",
   "properties",
   "format",
+  "required",
   "enumDesc",
   "exclusiveMinimum",
   "exclusiveMaximum",
@@ -21,6 +22,7 @@ const primaryAttributes = [
   "uniqueItems",
   "minItems",
   "maxItems",
+  "isArray",
 ];
 
 const generateExtraTypes = (keysExtra, valuesExtra, key) => {
@@ -80,12 +82,60 @@ const generateComplexTypes = (keysExtra, valuesExtra, key, type) => {
   }
 
   let xml = "";
-  xml += `<xs:element type="xs:${type}" ${defaultAttr} name="${key}"><xs:simpleContent><xs:extension ${baseAttr}>`;
-  keysExtra2.forEach((d, index) => {
-    xml += `<xs:attribute default="${valuesExtra2[index]}" name="${d.replace("attribute_", "")}" type="xs:string"/>`;
-  });
-  xml += `</xs:extension></xs:simpleContent></xs:element>`;
+  const isArray = keysExtra.indexOf("isArray") !== -1 ? `maxOccurs="unbounded"` : "";
+  if (keysExtra.length === 2 && keysExtra.indexOf("isArray") !== -1) {
+    xml += `<xs:element ${isArray} type="xs:${type}" ${defaultAttr} name="${key}" />`;
+  } else {
+    xml += `<xs:element ${isArray} type="xs:${type}" ${defaultAttr} name="${key}"><xs:simpleContent><xs:extension ${baseAttr}>`;
+    keysExtra2.forEach((d, index) => {
+      xml += `<xs:attribute default="${valuesExtra2[index]}" name="${d.replace("attribute_", "")}" type="xs:string"/>`;
+    });
+    xml += `</xs:extension></xs:simpleContent></xs:element>`;
+  }
+
   return xml;
+};
+
+const convertToObj = (arrayObj) => {
+  let obj = {};
+  if (arrayObj.type === "array") {
+    if (!Array.isArray(arrayObj.items)) {
+      arrayObj.items = [arrayObj.items];
+    }
+    obj.type = "object";
+    if (Array.isArray(arrayObj.items)) {
+      let commonObjKeys = {};
+      arrayObj.items.forEach((dObj) => {
+        if (dObj.type === "object") {
+          Object.keys(dObj.properties).forEach((d1) => {
+            if (Object.keys(commonObjKeys).indexOf(d1) === -1) {
+              if (dObj.properties[d1].type === "object") {
+                Object.keys(dObj.properties).forEach((d2) => {
+                  if (dObj.properties[d2].type === "array") {
+                    dObj.properties[d2] = convertToObj(dObj.properties[d2]);
+                  }
+                });
+                commonObjKeys[d1] = dObj.properties[d1];
+              } else if (dObj.properties[d1].type === "array") {
+                commonObjKeys[d1] = convertToObj(dObj.properties[d1]);
+              } else {
+                commonObjKeys[d1] = dObj.properties[d1];
+              }
+            }
+          });
+          obj.properties = commonObjKeys;
+          obj.isArray = true;
+        } else {
+          obj = dObj;
+          obj.isArray = true;
+        }
+      });
+    } else {
+      obj = arrayObj.items;
+      obj.isArray = true;
+    }
+  }
+  return obj;
 };
 
 const generateObj = (keys, values, hasParent = true, name = "", { keysExtra, valuesExtra } = { keysExtra: [], valuesExtra: [] }) => {
@@ -122,15 +172,18 @@ const generateObj = (keys, values, hasParent = true, name = "", { keysExtra, val
         xml += generateObj(keys2, values2, false, null, { keysExtra, valuesExtra }).xml;
         xml += `</xs:element>`;
       } else if (type === "array") {
-        const obj = values[key];
-        const keys2 = Object.keys(obj.items);
-        const values2 = Object.values(obj.items);
-
-        const keysExtra = Object.keys(obj);
-        const valuesExtra = Object.values(obj);
-        xml += `<xs:element name="${keys[key]}">`;
-        xml += generateObj(keys2, values2, false, null, { keysExtra, valuesExtra }).xml;
-        xml += `</xs:element>`;
+        const obj = convertToObj(values[key]);
+        if (obj.properties) {
+          const keys2 = Object.keys(obj.properties);
+          const values2 = Object.values(obj.properties);
+          const keysExtra = Object.keys(obj);
+          const valuesExtra = Object.values(obj);
+          xml += `<xs:element maxOccurs="unbounded" name="${keys[key]}">`;
+          xml += generateObj(keys2, values2, false, null, { keysExtra, valuesExtra }).xml;
+          xml += `</xs:element>`;
+        } else {
+          xml += `<xs:element maxOccurs="unbounded" type="xs:${obj.type}" name="${keys[key]}" />`;
+        }
       } else if (typeof type === "string" && type.length > 0) {
         let keysExtra = Object.keys(values[key]);
         let valuesExtra = Object.values(values[key]);
@@ -169,7 +222,6 @@ const generateObj = (keys, values, hasParent = true, name = "", { keysExtra, val
 
     let keysExtra = keys;
     let valuesExtra = values;
-
     if (type === "string" && keys.length === 1) {
       xml += `<xs:element ${defaultInline} type="xs:${type}" name="${name}_item"/>`;
     } else if (type === "string" && keys.length > 1) {
@@ -193,7 +245,8 @@ const generateObj = (keys, values, hasParent = true, name = "", { keysExtra, val
       if (attributes.length > 0) {
         attributes.forEach((attr, index) => {
           if (attr.indexOf("xsi") === -1) {
-            xml += `<xs:attribute default="${valuesExtra[keysExtra.indexOf(attr)]}" name="${attr.replace("attribute_", "")}" type="xs:string"/>`;
+            let defaultval = valuesExtra[keysExtra.indexOf(attr)] ? `default="${valuesExtra[keysExtra.indexOf(attr)]}"` : "";
+            xml += `<xs:attribute name="${attr.replace("attribute_", "")}" ${defaultval} type="xs:string"/>`;
           }
         });
       }
@@ -251,7 +304,7 @@ const generateSimpleContent = (d, coma = false, restrictions = {}) => {
   let minLength = "";
   let maxLength = "";
 
-  let type = d.attribute_type ? d.attribute_type : "";
+  let type = d.attribute_type ? d.attribute_type : ext.attribute_base;
 
   if (Array.isArray(attr)) {
     attrJson = attr.length > 0 ? `,${attr.map((a) => `"${a.attribute_name}":"${a.attribute_default || ""}"`)}` : "";
@@ -267,7 +320,6 @@ const generateSimpleContent = (d, coma = false, restrictions = {}) => {
       if (maxLength) attrJson += `,"maxLength":"${maxLength}"`;
     }
   }
-
   jsonString += `"${d.attribute_name}":{"type":"${type.replace("xs:", "")}"${attrJson}}${coma ? "," : ""}`;
   return jsonString;
 };
@@ -276,29 +328,24 @@ const generateJson = (keys, values, restrictions = {}, attributes = []) => {
   let jsonString = ``;
   let keyIndex = keys.indexOf("attribute_name");
   let complexTypeIndex = keys.indexOf("xs:complexType");
+
+  let arrayIndex = keys.indexOf("attribute_maxOccurs");
+
   if (complexTypeIndex !== -1) {
-    if (keys.indexOf("attribute_array") === -1) {
-      if (values[complexTypeIndex]["xs:sequence"]) {
-        const keys2 = Object.keys(values[complexTypeIndex]["xs:sequence"]["xs:element"]);
-        const values2 = Object.values(values[complexTypeIndex]["xs:sequence"]["xs:element"]);
-        jsonString += `{"${values[keyIndex]}":{"type":"object","properties":${generateJson(keys2, values2, restrictions)}${attributes.length > 0 ? "," : ""}${attributes.map(
-          (d, i) => `"${d.attribute_name}":""${attributes.length - 1 === i ? "" : ""}`
-        )}}}`;
-      } else {
-        jsonString += `{"${values[keyIndex]}":{"type":"object","properties":{}}}`;
-      }
-    } else {
+    if (values[complexTypeIndex]["xs:sequence"]) {
       const keys2 = Object.keys(values[complexTypeIndex]["xs:sequence"]["xs:element"]);
       const values2 = Object.values(values[complexTypeIndex]["xs:sequence"]["xs:element"]);
-      if (values2[keys2.indexOf("attribute_type")] === "xs:string") {
-        jsonString += `{"${values[keyIndex]}":{"type":"array","items":{"type":"string"}}}`;
-      } else {
-        if (keys2.indexOf("xs:complexType") !== -1) {
-          const keys3 = Object.keys(values2[keys2.indexOf("xs:complexType")]["xs:sequence"]);
-          const values3 = Object.values(values2[keys2.indexOf("xs:complexType")]["xs:sequence"]);
-          jsonString += `{"${values[keys.indexOf("attribute_name")]}":{"type":"array","items":{"type":"object","properties":${generateJson(keys3, values3, restrictions)}}}}`;
+      attributes.forEach((d, i) => {
+        if (typeof d === "undefined") {
+          attributes.splice(i, 1);
         }
-      }
+      });
+
+      jsonString += `{"${values[keyIndex]}":{"type":"object","properties":${generateJson(keys2, values2, restrictions)}${attributes.length > 0 ? "," : ""}${attributes.map((d, i) =>
+        d ? `"${d.attribute_name}":"${d.attribute_default || ""}"` : ""
+      )}}}`;
+    } else {
+      jsonString += `{"${values[keyIndex]}":{"type":"object","properties":{}}}`;
     }
   } else {
     jsonString += "{";
@@ -317,14 +364,35 @@ const generateJson = (keys, values, restrictions = {}, attributes = []) => {
           if (d["xs:complexType"] && d["xs:complexType"]["xs:sequence"]) {
             const keys2 = Object.keys(d["xs:complexType"]["xs:sequence"]);
             const values2 = Object.values(d["xs:complexType"]["xs:sequence"]);
-            jsonString += `"${d.attribute_name}":{"type":"object","properties":${generateJson(keys2, values2, restrictions)}}${coma ? "," : ""}`;
+            const maxBound = d.attribute_maxOccurs === "unbounded";
+            if (maxBound) {
+              jsonString += `"${d.attribute_name}":{"type":"array","items":{"type":"object","properties":${generateJson(keys2, values2, restrictions)}}${coma ? "," : ""}}`;
+            } else {
+              jsonString += `"${d.attribute_name}":{"type":"object","properties":${generateJson(keys2, values2, restrictions)}}${coma ? "," : ""}`;
+            }
           } else if (Array.isArray(d)) {
             d.forEach((d1, index) => {
               const coma2 = index !== d.length - 1;
               if (d1["xs:simpleContent"]) {
                 jsonString += generateSimpleContent(d1, coma2, restrictions);
+              } else if (d1["xs:complexType"] && d1["xs:complexType"]["xs:simpleContent"]) {
+                d1["xs:complexType"].attribute_name = d1.attribute_name;
+                jsonString += generateSimpleContent(d1["xs:complexType"], coma2, restrictions);
+              } else if (d1["xs:complexType"]) {
+                const keys2 = Object.keys(d1["xs:complexType"]["xs:sequence"]);
+                const values2 = Object.values(d1["xs:complexType"]["xs:sequence"]);
+                jsonString += `"${d1.attribute_name}":{"type":"object","properties":${generateJson(keys2, values2, restrictions)}}${coma ? "," : ""}`;
               } else {
-                jsonString += `"${d1.attribute_name}":{"type":"${d1.attribute_type.replace("xs:", "")}"}${coma2 ? "," : ""}`;
+                const maxBound = d1.attribute_maxOccurs === "unbounded";
+                if (maxBound) {
+                  if (!d1.attribute_ref) {
+                    jsonString += `"${d1.attribute_name}":{"type":"array","items":{"type":"${d1.attribute_type.replace("xs:", "")}"}}${coma2 ? "," : ""}`;
+                  }
+                } else {
+                  if (!d1.attribute_ref) {
+                    jsonString += `"${d1.attribute_name}":{"type":"${d1.attribute_type.replace("xs:", "")}"}${coma2 ? "," : ""}`;
+                  }
+                }
               }
             });
           } else if (d["xs:complexType"] && d["xs:complexType"]["xs:simpleContent"]) {
@@ -333,7 +401,11 @@ const generateJson = (keys, values, restrictions = {}, attributes = []) => {
           } else if (d["xs:simpleContent"]) {
             jsonString += generateSimpleContent(d, coma, restrictions);
           } else if (d.attribute_name && d.attribute_type) {
-            jsonString += `"${d.attribute_name}":{"type":"${d.attribute_type.replace("xs:", "")}"}${coma ? "," : ""}`;
+            if (d.attribute_maxOccurs) {
+              jsonString += `"${d.attribute_name}":{"type":"array","items":{"type":"${d.attribute_type.replace("xs:", "")}"}}${coma ? "," : ""}`;
+            } else {
+              jsonString += `"${d.attribute_name}":{"type":"${d.attribute_type.replace("xs:", "")}"}${coma ? "," : ""}`;
+            }
           }
         });
       }
@@ -357,12 +429,13 @@ const xmlSchemaOBJtoJsonSchema = (jsonObj) => {
   });
   if (parentObj) {
     const mainObj = parentObj["xs:element"];
-    const attributes = mainObj["xs:complexType"] && mainObj["xs:complexType"]["xs:attribute"];
+    let attributes = mainObj["xs:complexType"] && mainObj["xs:complexType"]["xs:attribute"];
     if (mainObj) {
       let keys = Object.keys(mainObj);
       let values = Object.values(mainObj);
 
       if (keys.length >= 2) {
+        if (!Array.isArray(attributes)) attributes = [attributes];
         jsonString += generateJson(keys, values, restrictions, attributes);
       }
     } else {
@@ -376,8 +449,16 @@ const xmlSchemaOBJtoJsonSchema = (jsonObj) => {
 
 exports.xml2xsd = (xmlString) => {
   const jsonObj = parser.parse(xmlString, { ignoreAttributes: false, textNodeName: "extension", attributeNamePrefix: "attribute_" });
-  const schema = toJsonSchema(jsonObj, { arrays: { mode: "tuple" } });
-  console.log(beautify(schema, null, 2, 200));
+  const newSchema = (schema, type) => {
+    schema.type = type;
+    return schema;
+  };
+  const options = {
+    arrays: { mode: "tuple" },
+    postProcessFnc: (type, schema, value, defaultFunc) => (type === "number" ? newSchema(schema, "integer") : defaultFunc(type, schema, value)),
+  };
+  const schema = toJsonSchema(jsonObj, options);
+  // console.log(beautify(schema, null, 2, 100));
   return format(OBJtoXSDElement(schema));
 };
 
@@ -392,7 +473,6 @@ exports.jsonSchema2xsd = (jsonSchema) => {
 
 exports.xsd2jsonSchema = (xsdString) => {
   const jsonObj = parser.parse(xsdString, { ignoreAttributes: false, attributeNamePrefix: "attribute_" });
-  // console.log(jsonObj);
   return beautify(xmlSchemaOBJtoJsonSchema(jsonObj), null, 2, 100);
 };
 
