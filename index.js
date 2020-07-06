@@ -138,7 +138,7 @@ const convertToObj = (arrayObj) => {
   return obj;
 };
 
-const generateObj = (keys, values, hasParent = true, name = "", { keysExtra, valuesExtra } = { keysExtra: [], valuesExtra: [] }) => {
+const generateObj = (keys, values, hasParent = true, name = "", { keysExtra, valuesExtra } = { keysExtra: [], valuesExtra: [] }, mainObjectExtraattributes = false) => {
   let xml = "";
   let xmlExtraTypes = "";
   let attributes = [];
@@ -230,7 +230,7 @@ const generateObj = (keys, values, hasParent = true, name = "", { keysExtra, val
     }
   }
 
-  if (!hasParent) {
+  if (!hasParent || (hasParent && mainObjectExtraattributes)) {
     keysExtra.forEach((d) => {
       if (primaryAttributes.indexOf(d) === -1) {
         attributes.push(d);
@@ -264,6 +264,11 @@ const OBJtoXSDElement = (obj) => {
   if (type === "object") {
     const keys = Object.keys(obj.properties);
     const values = Object.values(obj.properties);
+    const keysExtra = Object.keys(obj);
+    const valuesExtra = Object.values(obj);
+    const mainKeys = ["type", "title", "properties", "description", "required"]
+    const handleRootAttri = keysExtra.some((i) => !mainKeys.includes(i))
+
     if (keys.length > 1) {
       let title = "";
       let description = "";
@@ -280,7 +285,7 @@ const OBJtoXSDElement = (obj) => {
       xml += `<xs:complexType>`;
       xml += `<xs:sequence>`;
     }
-    let xmlObj = generateObj(keys, values);
+    let xmlObj = generateObj(keys, values, true, null, { keysExtra, valuesExtra }, handleRootAttri);
     xmlExtraTypes = xmlObj.xmlExtraTypes;
     xml += xmlObj.xml;
     if (keys.length > 1) {
