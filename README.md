@@ -39,7 +39,7 @@ import {
 } from xsdlibrary;
 ```
 
-Convert XML to XML Schema
+Convert XML data to XML Schema(XSD)
 
 ```js
 const xmlString = ``; // your xml string
