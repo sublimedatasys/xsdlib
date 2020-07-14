@@ -80,14 +80,16 @@ const generateComplexTypes = (keysExtra, valuesExtra, key, type) => {
 
 const convertToObj = (arrayObj) => {
   let obj = {};
-  if (arrayObj.type === "array") {
-    if (!Array.isArray(arrayObj.items)) {
-      arrayObj.items = [arrayObj.items];
+  let arrayObjParams = arrayObj;
+  let arrayObjItems = arrayObjParams.items;
+  if (arrayObjParams.type === "array") {
+    if (!Array.isArray(arrayObjItems)) {
+      arrayObjItems = [arrayObjParams.items];
     }
     obj.type = "object";
-    if (Array.isArray(arrayObj.items)) {
+    if (Array.isArray(arrayObjItems)) {
       let commonObjKeys = {};
-      arrayObj.items.forEach((dObj) => {
+      arrayObjItems.forEach((dObj) => {
         if (dObj.type === "object") {
           Object.keys(dObj.properties).forEach((d1) => {
             if (Object.keys(commonObjKeys).indexOf(d1) === -1) {
@@ -113,12 +115,13 @@ const convertToObj = (arrayObj) => {
         }
       });
     } else {
-      obj = arrayObj.items;
+      obj = arrayObjItems;
       obj.isArray = true;
     }
   }
   return obj;
 };
+
 
 const generateObj = (keys, values, hasParent = true, name = "", { keysExtra, valuesExtra } = { keysExtra: [], valuesExtra: [] }) => {
   let xml = "";
