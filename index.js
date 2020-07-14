@@ -3,6 +3,7 @@ let format = require("xml-formatter");
 let toJsonSchema = require("to-json-schema");
 let beautify = require("json-beautify");
 let _ = require("lodash");
+const { some } = require("lodash");
 
 let primaryAttributes = ["minLength", "maxLength", "default", "pattern", "type", "enum", "properties", "format", "required", "enumDesc", "exclusiveMinimum", "exclusiveMaximum", "minimum", "maximum", "uniqueItems", "minItems", "maxItems", "isArray"];
 
@@ -476,6 +477,91 @@ const xmlSchemaOBJtoJsonSchema = (jsonObj) => {
   return json.properties && json.properties.root ? json.properties.root : json;
 };
 
+
+
+const simplifyJson = (jsonObj) => {
+
+  const schema = jsonObj['xs:schema']
+
+  const getObjType = (nametype, name, otherProps) => {
+
+    let itemObj
+    let itemKey
+
+
+    const simpleTypes = schema['xs:simpleType']
+    const complexTypes = schema['xs:complexType']
+
+
+    complexTypes.forEach(d => {
+      if (d.attribute_name === nametype) {
+        // delete d.attribute_name
+        itemObj = d
+        itemKey = 'xs:complexType'
+      }
+    })
+
+    if (!itemObj && simpleTypes && simpleTypes.length) {
+      simpleTypes.forEach(d => {
+        if (d.attribute_name === nametype) {
+          itemObj = d
+          itemKey = 'xs:simpleType'
+        }
+      })
+    }
+
+    if (!itemKey && !itemObj) {
+      return null
+    }
+
+    if (itemKey === "xs:complexType") {
+      itemObj['xs:sequence']['xs:element'] = renderElements(itemObj['xs:sequence']['xs:element'])
+      return { attribute_name: name, [itemKey]: itemObj, ...otherProps }
+
+    }
+
+    if (itemKey === "xs:simpleType") {
+      itemObj = renderSimpleType(itemObj, name)
+      return itemObj
+    }
+  }
+
+  const renderSimpleType = (item, name) => {
+    if (item['xs:restriction']) {
+      const obj = item['xs:restriction']
+      return { attribute_name: name, attribute_type: obj.attribute_base }
+    }
+  }
+
+
+  const renderElements = (elements) => {
+    elements.forEach((d, index) => {
+      if (d.attribute_type && (d.attribute_type.toLowerCase().includes("type") || !d.attribute_type.toLowerCase().includes("xs:"))) {
+        let n = getObjType(d.attribute_type, d.attribute_name, { ...d })
+        if (n !== null) {
+          elements[index] = n
+        } else {
+          delete elements[index]
+        }
+      }
+    })
+
+    return elements
+  }
+
+  const obj = renderElements([schema['xs:element']])[0]
+
+  return {
+    "xs:schema": {
+      "attribute_xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+      "attribute_attributeFormDefault": "unqualified",
+      "attribute_elementFormDefault": "qualified",
+      "attribute_xmlns:xs": "http://www.w3.org/2001/XMLSchema",
+      "xs:element": obj
+    }
+  }
+}
+
 exports.xml2xsd = (xmlString) => {
   let jsonObj = parser.parse(xmlString, {
     ignoreAttributes: false,
@@ -505,10 +591,15 @@ exports.jsonSchema2xsd = (jsonSchema) => {
 };
 
 exports.xsd2jsonSchema = (xsdString) => {
+  xsdString = xsdString.split("xsd:").join("xs:")
+  xsdString = xsdString.split("tns:").join("")
+
+
   let jsonObj = parser.parse(xsdString, {
     ignoreAttributes: false,
     attributeNamePrefix: "attribute_",
   });
+  jsonObj = simplifyJson(jsonObj)
   return beautify(xmlSchemaOBJtoJsonSchema(jsonObj), null, 2, 100);
 };
 
