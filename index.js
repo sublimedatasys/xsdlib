@@ -577,7 +577,6 @@ exports.xml2xsd = (xmlString) => {
     postProcessFnc: (type, schema, value, defaultFunc) => (type === "number" ? newSchema(schema, "integer") : defaultFunc(type, schema, value)),
   };
   let schema = toJsonSchema(jsonObj, options);
-  // console.log(beautify(schema, null, 2, 100));
   return format(OBJtoXSDElement(schema));
 };
 
