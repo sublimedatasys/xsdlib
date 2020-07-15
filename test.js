@@ -1,37 +1,32 @@
-const { xml2xsd, detectXmlSchema, validateXml, jsonSchema2xsd, xsd2jsonSchema } = require("./index");
+const { xml2xsd, detectXmlSchema, validateXml, jsonSchema2xsd, xsd2jsonSchema, json2xsd } = require("./index");
 const beautify = require("json-beautify");
 
-const xsd1 = `<?xml version="1.0" encoding="UTF-8" ?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-<xs:element name="shiporder">
-  <xs:complexType>
-    <xs:sequence>
-      <xs:element name="orderperson" type="xs:string"/>
-      <xs:element name="shipto">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="name" type="xs:string"/>
-            <xs:element name="address" type="xs:string"/>
-            <xs:element name="city" type="xs:string"/>
-            <xs:element name="country" type="xs:string"/>
-          </xs:sequence>
+const xsd1 = `<?xml version="1.0" encoding="utf-16" ?>
+<xs:schema targetNamespace="http://NamespaceTest.com/CommonTypes"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+           <xs:element name="class">
+           <xs:complexType>
+              <xs:sequence>
+                 <xs:element name="student" type="StudentType" minOccurs="0" maxOccurs="unbounded" />
+              </xs:sequence>
+           </xs:complexType>
+        </xs:element>
+     
+        <xs:complexType name="StudentType">
+           <xs:sequence>
+              <xs:element name="firstname" type="xs:string"/>
+              <xs:element name="lastname" type="xs:string"/>
+              <xs:element name="nickname" type="xs:string"/>
+              <xs:element name="marks" type="xs:positiveInteger"/>
+           </xs:sequence>
+           <xs:attribute name="rollno" type="xs:positiveInteger"/>
         </xs:complexType>
-      </xs:element>
-      <xs:element name="item" maxOccurs="unbounded">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="title" type="xs:string"/>
-            <xs:element name="note" type="xs:string" minOccurs="0"/>
-            <xs:element name="quantity" type="xs:positiveInteger"/>
-            <xs:element name="price" type="xs:decimal"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute name="orderid" type="xs:string" use="required"/>
-  </xs:complexType>
-</xs:element>
-</xs:schema>`
+</xs:schema>
+`
 
 
+// console.log(xsd2jsonSchema(xsd2))
 console.log(xsd2jsonSchema(xsd1))
+// console.log()
+

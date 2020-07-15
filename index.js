@@ -486,8 +486,12 @@ const simplifyJson = jsonObj => {
       let itemObj;
       let itemKey;
 
-      const simpleTypes = schema["xs:simpleType"];
-      const complexTypes = schema["xs:complexType"];
+      let simpleTypes = schema["xs:simpleType"];
+      let complexTypes = schema["xs:complexType"];
+
+      if (complexTypes && !complexTypes.length) complexTypes = [complexTypes]
+      if (simpleTypes && !simpleTypes.length) simpleTypes = [simpleTypes]
+
 
       complexTypes.forEach(d => {
          if (d.attribute_name === nametype) {
@@ -509,6 +513,7 @@ const simplifyJson = jsonObj => {
       if (!itemKey && !itemObj) {
          return null;
       }
+
 
       if (itemKey === "xs:complexType") {
          itemObj["xs:sequence"]["xs:element"] = renderElements(itemObj["xs:sequence"]["xs:element"]);
@@ -534,6 +539,11 @@ const simplifyJson = jsonObj => {
 
    const renderElements = elements => {
       elements.forEach((d, index) => {
+         if (d['xs:complexType']) {
+            let elements2 = d['xs:complexType']['xs:sequence']['xs:element']
+            if (elements2 && !elements2.length) elements2 = [elements2]
+            elements[index]['xs:complexType']['xs:sequence']['xs:element'] = renderElements(elements2);
+         }
          if (d.attribute_type && (d.attribute_type.toLowerCase().includes("type") || !d.attribute_type.toLowerCase().includes("xs:"))) {
             let n = getObjType(d.attribute_type, d.attribute_name, d);
             if (n !== null) {
@@ -547,7 +557,9 @@ const simplifyJson = jsonObj => {
       return elements;
    };
 
+
    const obj = renderElements([schema["xs:element"]])[0];
+   // console.log(beautify((obj), null, 2, 100));
 
    return {
       "xs:schema": {
@@ -559,6 +571,67 @@ const simplifyJson = jsonObj => {
       }
    };
 };
+
+
+const convertRefType = (jsonObj) => {
+   const schema = jsonObj["xs:schema"];
+   const allElements = schema['xs:element']
+   let allAttributes = schema['xs:attribute']
+   if (allAttributes && !allAttributes.length) allAttributes = [allAttributes]
+
+   const renderElements = (elements) => {
+      elements.forEach((d, index) => {
+         if (d['xs:complexType']) {
+            const elements = d['xs:complexType']['xs:sequence']['xs:element']
+            d['xs:complexType']['xs:sequence']['xs:element'] = renderElements(elements)
+
+            let attributes = d['xs:complexType']['xs:attribute']
+            if (attributes && !attributes.length) attributes = [attributes]
+            if (attributes) {
+               attributes.forEach((attr, aIndex) => {
+                  const ref = attr.attribute_ref
+                  if (ref) {
+                     let attributeItem = allAttributes.find(d => d.attribute_name === ref)
+                     attributes[aIndex] = attributeItem
+                  }
+               })
+               d['xs:complexType']['xs:attribute'] = attributes
+            }
+         }
+
+
+         if (d['attribute_ref']) {
+            const ref = d['attribute_ref']
+            const refElement = allElements.find(d => d.attribute_name === ref)
+
+            Object.keys(d).forEach(k => {
+               if (k !== 'attribute_ref') {
+                  refElement[k] = d[k]
+               }
+            })
+
+            elements[index] = refElement
+         }
+
+      })
+      return elements
+   }
+
+   const updateElements = renderElements(allElements)
+   const mainElement = updateElements[updateElements.length - 1]
+
+   // console.log(beautify((mainElement), null, 2, 100));
+
+   return {
+      "xs:schema": {
+         "attribute_xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+         attribute_attributeFormDefault: "unqualified",
+         attribute_elementFormDefault: "qualified",
+         "attribute_xmlns:xs": "http://www.w3.org/2001/XMLSchema",
+         "xs:element": mainElement
+      }
+   };
+}
 
 exports.xml2xsd = xmlString => {
    let jsonObj = parser.parse(xmlString, {
@@ -591,10 +664,23 @@ exports.xsd2jsonSchema = xsdString => {
    xsdString = xsdString.split("xsd:").join("xs:");
    xsdString = xsdString.split("tns:").join("");
 
+   let isRefType = false;
+
+   if (xsdString.includes("ref=")) {
+      isRefType = true
+   }
+
    let jsonObj = parser.parse(xsdString, {
       ignoreAttributes: false,
       attributeNamePrefix: "attribute_"
    });
+
+   if (isRefType) {
+      jsonObj = convertRefType(jsonObj)
+   }
+
+   // console.log(beautify((jsonObj), null, 2, 100))
+
    jsonObj = simplifyJson(jsonObj);
    return beautify(xmlSchemaOBJtoJsonSchema(jsonObj), null, 2, 100);
 };
