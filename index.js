@@ -257,9 +257,12 @@ const OBJtoXSDElement = obj => {
 
    let i1 = rootKeys.indexOf("type");
    let i2 = rootKeys.indexOf("properties");
+   let i3 = rootKeys.indexOf("required");
 
    delete rootKeys[i1] && rootValues[i1];
    delete rootKeys[i2] && rootValues[i2];
+   delete rootKeys[i3] && rootValues[i3];
+
 
    if (type === "object") {
       let keys = Object.keys(obj.properties);
@@ -661,32 +664,32 @@ exports.jsonSchema2xsd = jsonSchema => {
 };
 
 exports.xsd2jsonSchema = xsdString => {
-   try{
-   xsdString = xsdString.split("xsd:").join("xs:");
-   xsdString = xsdString.split("tns:").join("");
+   try {
+      xsdString = xsdString.split("xsd:").join("xs:");
+      xsdString = xsdString.split("tns:").join("");
 
-   let isRefType = false;
+      let isRefType = false;
 
-   if (xsdString.includes("ref=")) {
-      isRefType = true
+      if (xsdString.includes("ref=")) {
+         isRefType = true
+      }
+
+      let jsonObj = parser.parse(xsdString, {
+         ignoreAttributes: false,
+         attributeNamePrefix: "attribute_"
+      });
+
+      if (isRefType) {
+         jsonObj = convertRefType(jsonObj)
+      }
+
+      // console.log(beautify((jsonObj), null, 2, 100))
+
+      jsonObj = simplifyJson(jsonObj);
+      return beautify(xmlSchemaOBJtoJsonSchema(jsonObj), null, 2, 100);
+   } catch (err) {
+      throw { err: "Invalid XSD Schema" }
    }
-
-   let jsonObj = parser.parse(xsdString, {
-      ignoreAttributes: false,
-      attributeNamePrefix: "attribute_"
-   });
-
-   if (isRefType) {
-      jsonObj = convertRefType(jsonObj)
-   }
-
-   // console.log(beautify((jsonObj), null, 2, 100))
-
-   jsonObj = simplifyJson(jsonObj);
-   return beautify(xmlSchemaOBJtoJsonSchema(jsonObj), null, 2, 100);
-}catch(err){
-  throw { err :"Invalid XSD Schema" }
-}
 };
 
 exports.validateXml = string => {
