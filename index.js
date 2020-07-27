@@ -685,7 +685,7 @@ exports.xsd2jsonSchema = xsdString => {
    jsonObj = simplifyJson(jsonObj);
    return beautify(xmlSchemaOBJtoJsonSchema(jsonObj), null, 2, 100);
 }catch(err){
-   console.log("error: Invalid XSD Schema")
+  throw { err :"Invalid XSD Schema" }
 }
 };
 
