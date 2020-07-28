@@ -465,85 +465,87 @@ const generateJson = (keys, values, restrictions = [], attributes = []) => {
    return jsonString;
 };
 
-const xmlSchemaOBJtoJsonSchema = jsonObj => {
-   let jsonString = "";
-   jsonString += `{"type":"object","properties":`;
-   let parentObj = jsonObj["xs:schema"];
-   let mainKeys = Object.keys(parentObj);
-   let mainValues = Object.values(parentObj);
-   let restrictions = [];
-   let attributesMain = []
+const xmlSchemaOBJtoJsonSchema = (jsonObj) => {
+   if (jsonObj) {
 
-   mainKeys.forEach((key, index) => {
+      let jsonString = "";
+      jsonString += `{"type":"object","properties":`;
+      let parentObj = jsonObj["xs:schema"];
+      let mainKeys = Object.keys(parentObj);
+      let mainValues = Object.values(parentObj);
+      let restrictions = [];
+      let attributesMain = []
 
+      mainKeys.forEach((key, index) => {
 
-      if (key === "xs:attribute") {
-         const attrs = mainValues[index]
-         if (attrs.length) {
-            attrs.forEach(d => {
-               attributesMain.push(d)
-            })
-         } else {
-            attributesMain.push(mainValues[index])
-         }
-      }
-
-      if (key === "xs:simpleType") {
-         if (mainValues[index].length) {
-            mainValues[index].forEach((elem) => {
-               restrictions.push({
-                  name: elem.attribute_name, restriction: elem["xs:restriction"]
+         if (key === "xs:attribute") {
+            const attrs = mainValues[index]
+            if (attrs.length) {
+               attrs.forEach(d => {
+                  attributesMain.push(d)
                })
-            })
-         } else {
-            restrictions.push({
-               name: mainValues[index].attribute_name, restriction: mainValues[index]['xs:restriction']
-            })
+            } else {
+               attributesMain.push(mainValues[index])
+            }
          }
-      }
-   });
-   if (parentObj) {
-      let mainObj = parentObj["xs:element"];
-      let attributes = mainObj["xs:complexType"] && mainObj["xs:complexType"]["xs:attribute"];
+
+         if (key === "xs:simpleType") {
+            if (mainValues[index].length) {
+               mainValues[index].forEach((elem) => {
+                  restrictions.push({
+                     name: elem.attribute_name, restriction: elem["xs:restriction"]
+                  })
+               })
+            } else {
+               restrictions.push({
+                  name: mainValues[index].attribute_name, restriction: mainValues[index]['xs:restriction']
+               })
+            }
+         }
+      });
+      if (parentObj) {
+         let mainObj = parentObj["xs:element"];
+         let attributes = mainObj["xs:complexType"] && mainObj["xs:complexType"]["xs:attribute"];
 
 
-      if (mainObj) {
-         let keys = Object.keys(mainObj);
-         let values = Object.values(mainObj);
+         if (mainObj) {
+            let keys = Object.keys(mainObj);
+            let values = Object.values(mainObj);
 
-         if (keys.length >= 2) {
-            if (!Array.isArray(attributes)) attributes = [attributes];
-            jsonString += generateJson(keys, values, restrictions, attributes);
-         } else if (keys.length === 1) {
+            if (keys.length >= 2) {
+               if (!Array.isArray(attributes)) attributes = [attributes];
+               jsonString += generateJson(keys, values, restrictions, attributes);
+            } else if (keys.length === 1) {
+               jsonString += `{}`;
+            }
+         } else {
             jsonString += `{}`;
          }
-      } else {
-         jsonString += `{}`;
       }
+      if (attributesMain.length > 0) {
+         attributesMain.forEach(d => {
+            jsonString += `,"${d.attribute_name}":"${d.attribute_default}"`
+         })
+      }
+      jsonString += `}`;
+
+      let json = JSON.parse(jsonString);
+
+
+      if (json.properties && json.properties.root) {
+         let keys = Object.keys(json)
+
+         keys.forEach(d => {
+            if (d !== "properties") {
+               json.properties.root[d] = json[d]
+            }
+         })
+
+
+      }
+
+      return json.properties && json.properties.root ? json.properties.root : json;
    }
-   if (attributesMain.length > 0) {
-      attributesMain.forEach(d => {
-         jsonString += `,"${d.attribute_name}":"${d.attribute_default}"`
-      })
-   }
-   jsonString += `}`;
-
-   let json = JSON.parse(jsonString);
-
-
-   if (json.properties && json.properties.root) {
-      let keys = Object.keys(json)
-
-      keys.forEach(d => {
-         if (d !== "properties") {
-            json.properties.root[d] = json[d]
-         }
-      })
-
-
-   }
-
-   return json.properties && json.properties.root ? json.properties.root : json;
 };
 
 const simplifyJson = jsonObj => {
@@ -625,24 +627,25 @@ const simplifyJson = jsonObj => {
    };
 
 
-   const obj = renderElements([schema["xs:element"]])[0];
-   const keys = Object.keys(schema)
-   const values = Object.keys(schema)
-   // console.log(beautify((obj), null, 2, 100));
+   if (schema) {
 
-   const newScheme = {
-      "xs:element": obj
-   }
+      const obj = renderElements([schema["xs:element"]])[0];
+      const keys = Object.keys(schema)
 
-   keys.forEach(d => {
-      if (d !== 'xs:element') {
-         newScheme[d] = schema[d]
+      const newScheme = {
+         "xs:element": obj
       }
-   })
 
-   return {
-      "xs:schema": newScheme
-   };
+      keys.forEach(d => {
+         if (d !== 'xs:element') {
+            newScheme[d] = schema[d]
+         }
+      })
+
+      return {
+         "xs:schema": newScheme
+      };
+   }
 };
 
 
