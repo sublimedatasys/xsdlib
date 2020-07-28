@@ -27,7 +27,7 @@ const generateExtraTypes = (keysExtra, valuesExtra, key) => {
    }
 
    if (minLengthIndex !== -1 || maxLengthIndex !== -1) {
-      xmlExtraTypes += `<xs:simpleType name="${key}Type">`;
+      xmlExtraTypes += `<xs:simpleType name="${key}ype">`;
       xmlExtraTypes += `<xs:restriction base="xs:${type}">`;
       xmlExtraTypes += minLength;
       xmlExtraTypes += maxLength;
@@ -56,7 +56,7 @@ const generateComplexTypes = (keysExtra, valuesExtra, key, type) => {
    let defaultAttr = "";
 
    if (minLengthIndex !== -1 || maxLengthIndex !== -1) {
-      baseAttr = `base="${key}Type"`;
+      baseAttr = `base="${key}ype"`;
    }
 
    if (defaultIndex !== -1) {
@@ -259,6 +259,7 @@ const OBJtoXSDElement = obj => {
    let i2 = rootKeys.indexOf("properties");
    let i3 = rootKeys.indexOf("required");
 
+
    delete rootKeys[i1] && rootValues[i1];
    delete rootKeys[i2] && rootValues[i2];
    delete rootKeys[i3] && rootValues[i3];
@@ -269,6 +270,11 @@ const OBJtoXSDElement = obj => {
       let values = Object.values(obj.properties);
       let keysExtra = Object.keys(obj);
       let valuesExtra = Object.values(obj);
+
+      if (keys.length === 0) {
+         xml += `<xs:element name="root">`;
+         xml += `</xs:element>`;
+      }
 
       if (keys.length > 1) {
          let title = "";
@@ -307,7 +313,7 @@ const OBJtoXSDElement = obj => {
    return xml;
 };
 
-const generateSimpleContent = (d, coma = false, restrictions = {}) => {
+const generateSimpleContent = (d, coma = false, restrictions = []) => {
    let jsonString = "";
    let ext = d["xs:simpleContent"]["xs:extension"];
    let attr = ext["xs:attribute"];
@@ -323,10 +329,14 @@ const generateSimpleContent = (d, coma = false, restrictions = {}) => {
       attrJson = `,"${attr.attribute_name}":"${attr.attribute_default || ""}"`;
    }
 
+
+
    if (ext.attribute_base) {
-      if (restrictions[ext.attribute_base]) {
-         let minLength = restrictions[ext.attribute_base] && restrictions[ext.attribute_base]["xs:minLength"] && restrictions[ext.attribute_base]["xs:minLength"]["attribute_value"];
-         let maxLength = restrictions[ext.attribute_base] && restrictions[ext.attribute_base]["xs:maxLength"] && restrictions[ext.attribute_base]["xs:maxLength"]["attribute_value"];
+      let restriction = restrictions.find(d => d.name === ext.attribute_base)
+      if (restriction) {
+         restriction = restriction.restriction
+         let minLength = restriction && restriction["xs:minLength"] && restriction["xs:minLength"]["attribute_value"];
+         let maxLength = restriction && restriction["xs:maxLength"] && restriction["xs:maxLength"]["attribute_value"];
          if (minLength) attrJson += `,"minLength":"${minLength}"`;
          if (maxLength) attrJson += `,"maxLength":"${maxLength}"`;
       }
@@ -335,7 +345,7 @@ const generateSimpleContent = (d, coma = false, restrictions = {}) => {
    return jsonString;
 };
 
-const generateJson = (keys, values, restrictions = {}, attributes = []) => {
+const generateJson = (keys, values, restrictions = [], attributes = []) => {
    let jsonString = ``;
    let keyIndex = keys.indexOf("attribute_name");
    let complexTypeIndex = keys.indexOf("xs:complexType");
@@ -432,6 +442,11 @@ const generateJson = (keys, values, restrictions = {}, attributes = []) => {
                   });
                } else if (d["xs:complexType"] && d["xs:complexType"]["xs:simpleContent"]) {
                   d["xs:complexType"].attribute_name = d.attribute_name;
+
+                  if (d.attribute_type) {
+                     d["xs:complexType"].attribute_type = d.attribute_type;
+
+                  }
                   jsonString += generateSimpleContent(d["xs:complexType"], coma, restrictions);
                } else if (d["xs:simpleContent"]) {
                   jsonString += generateSimpleContent(d, coma, restrictions);
@@ -456,15 +471,42 @@ const xmlSchemaOBJtoJsonSchema = jsonObj => {
    let parentObj = jsonObj["xs:schema"];
    let mainKeys = Object.keys(parentObj);
    let mainValues = Object.values(parentObj);
-   let restrictions = {};
+   let restrictions = [];
+   let attributesMain = []
+
    mainKeys.forEach((key, index) => {
+
+
+      if (key === "xs:attribute") {
+         const attrs = mainValues[index]
+         if (attrs.length) {
+            attrs.forEach(d => {
+               attributesMain.push(d)
+            })
+         } else {
+            attributesMain.push(mainValues[index])
+         }
+      }
+
       if (key === "xs:simpleType") {
-         restrictions[mainValues[index].attribute_name] = mainValues[index]["xs:restriction"];
+         if (mainValues[index].length) {
+            mainValues[index].forEach((elem) => {
+               restrictions.push({
+                  name: elem.attribute_name, restriction: elem["xs:restriction"]
+               })
+            })
+         } else {
+            restrictions.push({
+               name: mainValues[index].attribute_name, restriction: mainValues[index]['xs:restriction']
+            })
+         }
       }
    });
    if (parentObj) {
       let mainObj = parentObj["xs:element"];
       let attributes = mainObj["xs:complexType"] && mainObj["xs:complexType"]["xs:attribute"];
+
+
       if (mainObj) {
          let keys = Object.keys(mainObj);
          let values = Object.values(mainObj);
@@ -472,13 +514,35 @@ const xmlSchemaOBJtoJsonSchema = jsonObj => {
          if (keys.length >= 2) {
             if (!Array.isArray(attributes)) attributes = [attributes];
             jsonString += generateJson(keys, values, restrictions, attributes);
+         } else if (keys.length === 1) {
+            jsonString += `{}`;
          }
       } else {
          jsonString += `{}`;
       }
    }
+   if (attributesMain.length > 0) {
+      attributesMain.forEach(d => {
+         jsonString += `,"${d.attribute_name}":"${d.attribute_default}"`
+      })
+   }
    jsonString += `}`;
+
    let json = JSON.parse(jsonString);
+
+
+   if (json.properties && json.properties.root) {
+      let keys = Object.keys(json)
+
+      keys.forEach(d => {
+         if (d !== "properties") {
+            json.properties.root[d] = json[d]
+         }
+      })
+
+
+   }
+
    return json.properties && json.properties.root ? json.properties.root : json;
 };
 
@@ -541,9 +605,9 @@ const simplifyJson = jsonObj => {
    };
 
    const renderElements = elements => {
-      elements.forEach((d, index) => {
-         if (d['xs:complexType']) {
-            let elements2 = d['xs:complexType']['xs:sequence']['xs:element']
+      elements && elements.length && elements.forEach((d, index) => {
+         if (d['xs:complexType'] && d['xs:complexType']['xs:sequence']) {
+            let elements2 = d['xs:complexType'] && d['xs:complexType']['xs:sequence'] && d['xs:complexType']['xs:sequence']['xs:element']
             if (elements2 && !elements2.length) elements2 = [elements2]
             elements[index]['xs:complexType']['xs:sequence']['xs:element'] = renderElements(elements2);
          }
@@ -562,16 +626,22 @@ const simplifyJson = jsonObj => {
 
 
    const obj = renderElements([schema["xs:element"]])[0];
+   const keys = Object.keys(schema)
+   const values = Object.keys(schema)
    // console.log(beautify((obj), null, 2, 100));
 
-   return {
-      "xs:schema": {
-         "attribute_xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-         attribute_attributeFormDefault: "unqualified",
-         attribute_elementFormDefault: "qualified",
-         "attribute_xmlns:xs": "http://www.w3.org/2001/XMLSchema",
-         "xs:element": obj
+   const newScheme = {
+      "xs:element": obj
+   }
+
+   keys.forEach(d => {
+      if (d !== 'xs:element') {
+         newScheme[d] = schema[d]
       }
+   })
+
+   return {
+      "xs:schema": newScheme
    };
 };
 
@@ -683,11 +753,11 @@ exports.xsd2jsonSchema = xsdString => {
          jsonObj = convertRefType(jsonObj)
       }
 
-      // console.log(beautify((jsonObj), null, 2, 100))
 
       jsonObj = simplifyJson(jsonObj);
       return beautify(xmlSchemaOBJtoJsonSchema(jsonObj), null, 2, 100);
    } catch (err) {
+      console.log(err)
       throw { err: "Invalid XSD Schema" }
    }
 };
