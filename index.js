@@ -323,6 +323,12 @@ const generateSimpleContent = (d, coma = false, restrictions = []) => {
 
    let type = d.attribute_type ? d.attribute_type : ext.attribute_base;
 
+   if (!attr) {
+      attr = d.attribute_name
+   }
+
+   if (!type) { type = "xs:string" }
+
    if (Array.isArray(attr)) {
       attrJson = attr.length > 0 ? `,${attr.map(a => `"${a.attribute_name}":"${a.attribute_default || ""}"`)}` : "";
    } else if (attr.attribute_name) {
