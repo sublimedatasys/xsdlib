@@ -1,10 +1,7 @@
 const { xsd2jsonSchema, json2xsd, jsonSchema2xsd, xml2xsd } = require(".")
 
 
-const test = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-<xs:element name="root"></xs:element>
-<xs:attribute default="title" name="title" type="xs:string"/>
-</xs:schema><?xml version="1.0" encoding="UTF-8"?>
+const test = `<?xml version="1.0" encoding="UTF-8"?>
 <Invoice xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
     xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
     xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">
@@ -77,6 +74,7 @@ const test = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
                 <cbc:CompanyID  schemeID="0151">47555222000</cbc:CompanyID>
                 <cbc:CompanyLegalForm>Partnership</cbc:CompanyLegalForm>
             </cac:PartyLegalEntity>
+
             <cac:Contact>
                 <cbc:Name>Ronald MacDonald</cbc:Name>
                 <cbc:Telephone>Mobile 0430123456</cbc:Telephone>
@@ -84,6 +82,7 @@ const test = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
             </cac:Contact>
         </cac:Party>
     </cac:AccountingSupplierParty>
+
     <cac:AccountingCustomerParty>
         <cac:Party>
             <cbc:EndpointID schemeID="0088">9429033591476</cbc:EndpointID>
@@ -119,6 +118,7 @@ const test = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
             </cac:Contact>
         </cac:Party>
     </cac:AccountingCustomerParty>
+
     <cac:PayeeParty>
        <cac:PartyIdentification>
            <cbc:ID>91888222000</cbc:ID>
@@ -126,10 +126,12 @@ const test = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
        <cac:PartyName>
            <cbc:Name>Mr Anderson</cbc:Name>
        </cac:PartyName>
+
        <cac:PartyLegalEntity>
            <cbc:CompanyID schemeID="0088">9429033591476</cbc:CompanyID>
        </cac:PartyLegalEntity>    
     </cac:PayeeParty>
+
     <cac:TaxRepresentativeParty>
        <cac:PartyName>
            <cbc:Name>Mr Wilson</cbc:Name>
@@ -154,6 +156,8 @@ const test = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
                 </cac:TaxScheme>
             </cac:PartyTaxScheme> 
     </cac:TaxRepresentativeParty>
+
+
     <cac:Delivery>
         <cbc:ActualDeliveryDate>2019-06-01</cbc:ActualDeliveryDate>
         <cac:DeliveryLocation>
@@ -207,6 +211,8 @@ const test = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
             </cac:TaxScheme>
         </cac:TaxCategory>
     </cac:AllowanceCharge>
+
+
     <cac:TaxTotal>
         <cbc:TaxAmount currencyID="AUD">148.74</cbc:TaxAmount>
         <cac:TaxSubtotal>
@@ -221,6 +227,9 @@ const test = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
             </cac:TaxCategory>
         </cac:TaxSubtotal>
     </cac:TaxTotal>
+
+
+
     <cac:LegalMonetaryTotal>
         <cbc:LineExtensionAmount currencyID="AUD">1487.40</cbc:LineExtensionAmount>
         <cbc:TaxExclusiveAmount currencyID="AUD">1487.40</cbc:TaxExclusiveAmount>
@@ -230,6 +239,7 @@ const test = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
         <cbc:PayableAmount currencyID="AUD">1636.14</cbc:PayableAmount>
     </cac:LegalMonetaryTotal>
  
+
     <cac:InvoiceLine>
        <cbc:ID>1</cbc:ID>
        <cbc:Note>Texts Giving More Info about the Invoice Line</cbc:Note>
@@ -247,6 +257,7 @@ const test = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
             <cbc:ID schemeID="HWB">9000074677</cbc:ID>
             <cbc:DocumentTypeCode>130</cbc:DocumentTypeCode> 
        </cac:DocumentReference>
+
     <cac:Item>
         <cbc:Description>Widgets True and Fair</cbc:Description>
            <cbc:Name>True-Widgets</cbc:Name>
@@ -273,6 +284,7 @@ const test = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
                 </cac:TaxScheme>
             </cac:ClassifiedTaxCategory>
         </cac:Item>
+
        <cac:Price>
            <cbc:PriceAmount currencyID="AUD">29.99</cbc:PriceAmount>
            <cac:AllowanceCharge>
@@ -281,7 +293,10 @@ const test = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
               <cbc:BaseAmount currencyID="AUD">29.99</cbc:BaseAmount>
            </cac:AllowanceCharge>
        </cac:Price>
+
     </cac:InvoiceLine>
+
+
    <cac:InvoiceLine>
       <cbc:ID>2</cbc:ID>
       <cbc:InvoicedQuantity unitCode="DAY">2</cbc:InvoicedQuantity>
@@ -313,6 +328,10 @@ const test = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
           <cbc:PriceAmount currencyID="AUD">500</cbc:PriceAmount>
       </cac:Price>
    </cac:InvoiceLine>
+
+
+
+
 <cac:InvoiceLine>
        <cbc:ID>3</cbc:ID>
        <cbc:Note>Invoice Line Description</cbc:Note>
@@ -330,6 +349,7 @@ const test = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
             <cbc:ID schemeID="HWB">9000074677</cbc:ID>
             <cbc:DocumentTypeCode>130</cbc:DocumentTypeCode> 
        </cac:DocumentReference>
+
     <cac:Item>
         <cbc:Description>Widgets True and Fair</cbc:Description>
            <cbc:Name>True-Widgets</cbc:Name>
@@ -356,6 +376,7 @@ const test = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
                 </cac:TaxScheme>
             </cac:ClassifiedTaxCategory>
         </cac:Item>
+
        <cac:Price>
            <cbc:PriceAmount currencyID="AUD">7.50</cbc:PriceAmount>
            <cac:AllowanceCharge>
@@ -364,9 +385,13 @@ const test = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
               <cbc:BaseAmount currencyID="AUD">7.50</cbc:BaseAmount>
            </cac:AllowanceCharge>
        </cac:Price>
+
     </cac:InvoiceLine>
-</Invoice>
-`
 
 
-console.log(xsd2jsonSchema(xml2xsd(test)))
+
+
+</Invoice>`
+
+
+console.log(xml2xsd(test))

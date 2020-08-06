@@ -193,7 +193,9 @@ const generateObj = (keys, values, hasParent = true, name = "", { keysExtra, val
                   if (attributes.length > 0) {
                      xml += `<xs:extension base="xs:${type}">`;
                      attributes.forEach(d => {
-                        xml += `<xs:attribute name="${d.replace("attribute_", "")}" type="xs:string"/>`;
+                        if (d.indexOf("xsi") === -1 && d.indexOf("xmlns") === -1) {
+                           xml += `<xs:attribute name="${d.replace("attribute_", "")}" type="xs:string"/>`;
+                        }
                      });
                      xml += `</xs:extension>`;
                   } else {
@@ -234,7 +236,7 @@ const generateObj = (keys, values, hasParent = true, name = "", { keysExtra, val
          xml += `</xs:sequence>`;
          if (attributes.length > 0) {
             attributes.forEach((attr, index) => {
-               if (attr.indexOf("xsi") === -1) {
+               if (attr.indexOf("xsi") === -1 && attr.indexOf("xmlns") === -1) {
                   let defaultval = valuesExtra[keysExtra.indexOf(attr)] ? `default="${valuesExtra[keysExtra.indexOf(attr)]}"` : "";
                   xml += `<xs:attribute name="${attr.replace("attribute_", "")}" ${defaultval} type="xs:string"/>`;
                }
