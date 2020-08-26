@@ -1,5 +1,5 @@
-const { xsd2jsonSchema, json2xsd, jsonSchema2xsd, xml2xsd } = require(".")
-
+const { xsd2jsonSchema, json2xsd, jsonSchema2xsd, xml2xsd } = require('.')
+const { json2xml } = require('./json2xml')
 
 const test = `<?xml version="1.0" encoding="UTF-8"?>
 <Invoice xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
@@ -393,5 +393,19 @@ const test = `<?xml version="1.0" encoding="UTF-8"?>
 
 </Invoice>`
 
+const json = {
+   type: 'object',
+   properties: {
+      note: {
+         type: 'object',
+         properties: {
+            to: { type: 'string', default: 'abc', abc: '123abc' },
+            from: { type: 'string' },
+            heading: { type: 'string' },
+            body: { type: 'string' }
+         }
+      }
+   }
+}
 
-console.log(xml2xsd(test))
+console.log(json2xml(json))
