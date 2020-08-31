@@ -1,5 +1,6 @@
-const { xsd2jsonSchema, json2xsd, jsonSchema2xsd, xml2xsd } = require('.')
+const { xsd2jsonSchema, json2xsd, jsonSchema2xsd, xml2xsd, xml2json } = require('.')
 const { json2xml } = require('./json2xml')
+let beautify = require("json-beautify");
 
 const test = `<?xml version="1.0" encoding="UTF-8"?>
 <Invoice xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
@@ -399,7 +400,7 @@ const json = {
       note: {
          type: 'object',
          properties: {
-            to: { type: 'string', default: 'abc', abc: '123abc' },
+            to: { type: 'string', default: 'abc' },
             from: { type: 'string' },
             heading: { type: 'string' },
             body: { type: 'string' }
@@ -408,4 +409,14 @@ const json = {
    }
 }
 
-console.log(json2xml(json))
+const xml = `<note>
+<to id="1">Tove</to>
+<from>Jani</from>
+<heading>Reminder</heading>
+<body>Don't forget me this weekend!</body>
+</note>`
+
+const jsonO = xml2json(test)
+console.log(beautify(jsonO,null,2,100))
+const xmlO = json2xml(jsonO)
+console.log(xmlO)

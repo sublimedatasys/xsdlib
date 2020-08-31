@@ -37,6 +37,8 @@ const generateExtraTypes = (keysExtra, valuesExtra, key) => {
    return xmlExtraTypes;
 };
 
+const json2xmldata = () => { }
+
 const generateComplexTypes = (keysExtra, valuesExtra, key, type) => {
    let minLengthIndex = keysExtra.indexOf("minLength");
    let maxLengthIndex = keysExtra.indexOf("maxLength");
@@ -60,13 +62,13 @@ const generateComplexTypes = (keysExtra, valuesExtra, key, type) => {
    }
 
    if (defaultIndex !== -1) {
-      defaultAttr = `default="${valuesExtra[defaultIndex]}"`;
+      defaultAttr = `${valuesExtra[defaultIndex]}`;
    }
 
    let xml = "";
    let isArray = keysExtra.indexOf("isArray") !== -1 ? `maxOccurs="unbounded"` : "";
    if (keysExtra.length === 2 && keysExtra.indexOf("isArray") !== -1) {
-      xml += `<xs:element ${isArray} type="xs:${type}" ${defaultAttr} name="${key}" />`;
+      xml += `<${key}>${defaultAttr}</${key}>`;
    } else {
       xml += `<xs:element ${isArray} type="xs:${type}" ${defaultAttr} name="${key}"><xs:complexType><xs:simpleContent><xs:extension ${baseAttr}>`;
       keysExtra2.forEach((d, index) => {
@@ -716,6 +718,51 @@ const convertRefType = (jsonObj) => {
       }
    };
 }
+
+exports.xml2json = xmlString => {
+   let jsonObj = parser.parse(xmlString, {
+      ignoreAttributes: false,
+      textNodeName: "extension",
+      attributeNamePrefix: "@"
+   });
+   let newSchema = (schema, type) => {
+      schema.type = type;
+      return schema;
+   };
+   let newDefSchema = (schema, type, value) => {
+
+      if (typeof value === "string" || typeof value === "number") {
+         schema.default = value
+      }
+
+      schema.type = type;
+
+      const keys = Object.keys(value);
+      keys.forEach(d => {
+         if (d.indexOf("@") !== -1) {
+            schema.properties[d] = value[d]
+         }
+      })
+
+      if (keys.indexOf("extension") !== -1) {
+         schema.type = schema.properties.extension.type
+         schema.default = schema.properties.extension.default
+         delete schema.properties.extension
+         Object.keys(schema.properties).forEach(d=>{
+            schema[d] = schema.properties[d]
+         })
+         delete schema.properties
+      }
+
+      return schema;
+   };
+   let options = {
+      arrays: { mode: "tuple" },
+      postProcessFnc: (type, schema, value, defaultFunc) => (type === "number" ? newSchema(schema, "integer") : newDefSchema(schema, type, value))
+   };
+   let schema = toJsonSchema(jsonObj, options);
+   return schema;
+};
 
 exports.xml2xsd = xmlString => {
    let jsonObj = parser.parse(xmlString, {
