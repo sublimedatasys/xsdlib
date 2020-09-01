@@ -2,8 +2,7 @@ let parser = require("fast-xml-parser");
 let format = require("xml-formatter");
 let toJsonSchema = require("to-json-schema");
 let beautify = require("json-beautify");
-let _ = require("lodash");
-const { some } = require("lodash");
+const { json2xml } = require('./json2xml')
 
 let primaryAttributes = ["minLength", "maxLength", "default", "pattern", "type", "enum", "properties", "format", "required", "enumDesc", "exclusiveMinimum", "exclusiveMaximum", "minimum", "maximum", "uniqueItems", "minItems", "maxItems", "isArray"];
 
@@ -37,7 +36,6 @@ const generateExtraTypes = (keysExtra, valuesExtra, key) => {
    return xmlExtraTypes;
 };
 
-const json2xmldata = () => { }
 
 const generateComplexTypes = (keysExtra, valuesExtra, key, type) => {
    let minLengthIndex = keysExtra.indexOf("minLength");
@@ -719,6 +717,9 @@ const convertRefType = (jsonObj) => {
    };
 }
 
+const fixedAttributes = ['@title', '@description']
+
+
 exports.xml2json = xmlString => {
    let jsonObj = parser.parse(xmlString, {
       ignoreAttributes: false,
@@ -738,9 +739,11 @@ exports.xml2json = xmlString => {
       schema.type = type;
 
       const keys = Object.keys(value);
-      keys.forEach(d => {
+      keys.forEach((d, index) => {
          if (d.indexOf("@") !== -1) {
             schema.properties[d] = value[d]
+            delete schema.properties[d]
+            schema[d.replace("@","")] = value[d]
          }
       })
 
@@ -748,7 +751,7 @@ exports.xml2json = xmlString => {
          schema.type = schema.properties.extension.type
          schema.default = schema.properties.extension.default
          delete schema.properties.extension
-         Object.keys(schema.properties).forEach(d=>{
+         Object.keys(schema.properties).forEach(d => {
             schema[d] = schema.properties[d]
          })
          delete schema.properties
@@ -761,8 +764,10 @@ exports.xml2json = xmlString => {
       postProcessFnc: (type, schema, value, defaultFunc) => (type === "number" ? newSchema(schema, "integer") : newDefSchema(schema, type, value))
    };
    let schema = toJsonSchema(jsonObj, options);
-   return schema;
+   return JSON.stringify(schema);
 };
+
+exports.json2xmldata = json2xml
 
 exports.xml2xsd = xmlString => {
    let jsonObj = parser.parse(xmlString, {
