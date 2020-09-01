@@ -394,29 +394,17 @@ const test = `<?xml version="1.0" encoding="UTF-8"?>
 
 </Invoice>`
 
-const json = {
-   type: 'object',
-   properties: {
-      note: {
-         type: 'object',
-         properties: {
-            to: { type: 'string', default: 'abc' },
-            from: { type: 'string' },
-            heading: { type: 'string' },
-            body: { type: 'string' }
-         }
-      }
-   }
-}
+const json = { "type": "object", "properties": { "data": { "type": "object", "properties": { "note": { "type": "string", "title": "aasc" } } } } }
 
 const xml = `<note>
-<to id="1">Tove</to>
+<to title="123" data="abc">Tove</to>
 <from>Jani</from>
 <heading>Reminder</heading>
 <body>Don't forget me this weekend!</body>
 </note>`
 
-const jsonO = xml2json(test)
-console.log(beautify(jsonO,null,2,100))
+const jsonO = xml2json(xml)
+console.log(beautify(JSON.parse(jsonO), null, 2, 100))
 const xmlO = json2xml(jsonO)
 console.log(xmlO)
+
