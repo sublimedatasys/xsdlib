@@ -1,6 +1,6 @@
 let format = require('xml-formatter')
 
-let primaryAttributes = ['minLength', 'maxLength', 'default', 'pattern', 'type', 'enum', 'properties', 'format', 'required', 'enumDesc', 'exclusiveMinimum', 'exclusiveMaximum', 'minimum', 'maximum', 'uniqueItems', 'minItems', 'maxItems', 'isArray']
+let primaryAttributes = ['minLength', 'maxLength', 'default', 'pattern', 'type', 'enum', 'properties', 'format', 'required', 'enumDesc', 'exclusiveMinimum', 'exclusiveMaximum', 'minimum', 'maximum', 'uniqueItems', 'minItems', 'items', 'maxItems', 'isArray']
 
 const ATTR = '@'
 const EXT = 'extension'
@@ -38,6 +38,10 @@ const converObj = (json) => {
       })
 
       if (itemValues[index].type === 'object' || itemValues[index].type === 'array') {
+        xml += `<${d} ${attrString}>`
+        xml += `${converObj(itemValues[index])}`
+        xml += `</${d}>`
+      } else {
         if (itemValues[index].type === 'array') {
           if (itemValues[index].items[0] && itemValues[index].items[0].properties) {
             const itemKeys = Object.keys(itemValues[index].items[0].properties)
@@ -48,11 +52,6 @@ const converObj = (json) => {
             })
           }
         }
-
-        xml += `<${d} ${attrString}>`
-        xml += `${converObj(itemValues[index])}`
-        xml += `</${d}>`
-      } else {
         if (primaryAttributes.indexOf(d) === -1) {
           xml += `<${d}${attrString}>`
           xml += `${defaultString}`
@@ -70,26 +69,39 @@ const converObj = (json) => {
       let attrString = ''
       let defaultString = ''
 
-      if (itemValues[index].properties) {
-        const attributes = Object.keys(itemValues[index].properties)
-        attributes.forEach((d) => {
+      if (itemValues[index].type === 'object') {
+        // if (itemValues[index].items[0] && itemValues[index].items[0].properties) {
+        const itemKeys = Object.keys(itemValues[index])
+        itemKeys.forEach((d) => {
           if (primaryAttributes.indexOf(d) === -1) {
-            attrString += ` ${d}="${itemValues[index].properties[d]}"`
-          }
-          if (d.indexOf(EXT) !== -1) {
-            defaultString += itemValues[index].properties[d].default
+            attrString += ` ${d}="${itemValues[index][d]}"`
           }
         })
-      }
-
-      if (itemValues[index].default) {
-        defaultString = itemValues[index].default
-      }
-
-      if (primaryAttributes.indexOf(d) === -1) {
-        xml += `<${d}${attrString}>`
-        xml += defaultString
+        xml += `<${d} ${attrString}>`
+        xml += `${converObj(itemValues[index])}`
         xml += `</${d}>`
+      } else {
+        if (itemValues[index].default) {
+          defaultString = itemValues[index].default
+        }
+
+        if (itemValues[index].properties) {
+          const attributes = Object.keys(itemValues[index].properties)
+          attributes.forEach((d) => {
+            if (primaryAttributes.indexOf(d) === -1) {
+              attrString += ` ${d}="${itemValues[index].properties[d]}"`
+            }
+            if (d.indexOf(EXT) !== -1) {
+              defaultString += itemValues[index].properties[d].default
+            }
+          })
+        }
+
+        if (primaryAttributes.indexOf(d) === -1) {
+          xml += `<${d}${attrString}>`
+          xml += defaultString
+          xml += `</${d}>`
+        }
       }
     })
   }
