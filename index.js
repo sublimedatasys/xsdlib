@@ -4,7 +4,7 @@ let toJsonSchema = require('to-json-schema')
 let beautify = require('json-beautify')
 const { json2xml } = require('./json2xml')
 
-let primaryAttributes = ['minLength', 'maxLength', 'default', 'pattern', 'type', 'enum', 'properties', 'format', 'required', 'enumDesc', 'exclusiveMinimum', 'exclusiveMaximum', 'minimum', 'maximum', 'uniqueItems', 'minItems', 'maxItems', 'isArray']
+let primaryAttributes = ['minLength', 'maxLength', 'array', 'default', 'pattern', 'type', 'enum', 'properties', 'format', 'required', 'enumDesc', 'exclusiveMinimum', 'exclusiveMaximum', 'minimum', 'maximum', 'uniqueItems', 'minItems', 'maxItems', 'isArray']
 
 const generateExtraTypes = (keysExtra, valuesExtra, key) => {
   let xmlExtraTypes = ''
@@ -657,7 +657,6 @@ const convertRefType = (jsonObj) => {
       if (d['xs:complexType']) {
         const elements = d['xs:complexType']['xs:sequence']['xs:element']
         d['xs:complexType']['xs:sequence']['xs:element'] = renderElements(elements)
-
         let attributes = d['xs:complexType']['xs:attribute']
         if (attributes && !attributes.length) attributes = [attributes]
         if (attributes) {
@@ -707,49 +706,60 @@ const convertRefType = (jsonObj) => {
 const fixedAttributes = ['@title', '@description']
 
 exports.xml2json = (xmlString) => {
-  let jsonObj = parser.parse(xmlString, {
-    ignoreAttributes: false,
-    textNodeName: 'extension',
-    attributeNamePrefix: '@',
-  })
-  let newSchema = (schema, type) => {
-    schema.type = type
-    return schema
-  }
-  let newDefSchema = (schema, type, value) => {
-    if (typeof value !== 'object') {
-      schema.default = value
-    }
-
-    schema.type = type
-
-    const keys = Object.keys(value)
-    keys.forEach((d, index) => {
-      if (d.indexOf('@') !== -1) {
-        schema.properties[d] = value[d]
-        delete schema.properties[d]
-        schema[d.replace('@', '')] = value[d]
-      }
+  if (xmlString !== '<data></data>') {
+    let jsonObj = parser.parse(format(xmlString), {
+      ignoreAttributes: false,
+      textNodeName: 'extension',
+      attributeNamePrefix: '@',
     })
-
-    if (keys.indexOf('extension') !== -1) {
-      schema.type = schema.properties.extension.type
-      schema.default = value.extension
-      delete schema.properties.extension
-      Object.keys(schema.properties).forEach((d) => {
-        schema[d] = schema.properties[d]
-      })
-      delete schema.properties
+    let newSchema = (schema, type) => {
+      schema.type = type
+      return schema
     }
+    let newDefSchema = (schema, type, value) => {
+      if (typeof value !== 'object') {
+        schema.default = value
+      }
 
-    return schema
+      schema.type = type
+
+      const keys = Object.keys(value)
+
+      keys.forEach((d, index) => {
+        if (d.indexOf('@') !== -1) {
+          if (schema.properties) {
+            schema.properties[d] = value[d]
+            delete schema.properties[d]
+            schema[d.replace('@', '')] = value[d]
+          }
+        }
+      })
+
+      if (keys.indexOf('extension') !== -1) {
+        schema.type = schema.properties.extension.type
+        schema.default = value.extension
+        delete schema.properties.extension
+        Object.keys(schema.properties).forEach((d) => {
+          schema[d] = schema.properties[d]
+        })
+        delete schema.properties
+      }
+
+      if (keys.indexOf('@array') !== -1) {
+        schema.type = 'array'
+        schema.items = { type: 'object', properties: schema.properties }
+        delete schema.properties
+      }
+
+      return schema
+    }
+    let options = {
+      arrays: { mode: 'first' },
+      postProcessFnc: (type, schema, value, defaultFunc) => newDefSchema(schema, type, value),
+    }
+    let schema = toJsonSchema(jsonObj, options)
+    return JSON.stringify(schema)
   }
-  let options = {
-    arrays: { mode: 'tuple' },
-    postProcessFnc: (type, schema, value, defaultFunc) => newDefSchema(schema, type, value),
-  }
-  let schema = toJsonSchema(jsonObj, options)
-  return JSON.stringify(schema)
 }
 
 exports.json2xmldata = json2xml

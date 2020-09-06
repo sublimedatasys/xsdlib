@@ -1,6 +1,7 @@
 let format = require('xml-formatter')
+const beautify = require('json-beautify')
 
-let primaryAttributes = ['minLength', 'maxLength', 'default', 'pattern', 'type', 'enum', 'properties', 'format', 'required', 'enumDesc', 'exclusiveMinimum', 'exclusiveMaximum', 'minimum', 'maximum', 'uniqueItems', 'minItems', 'items', 'maxItems', 'isArray']
+let primaryAttributes = ['minLength', 'maxLength', 'array', '@array', 'default', 'pattern', 'type', 'enum', 'properties', 'format', 'required', 'enumDesc', 'exclusiveMinimum', 'exclusiveMaximum', 'minimum', 'maximum', 'uniqueItems', 'minItems', 'items', 'maxItems', 'isArray']
 
 const ATTR = '@'
 const EXT = 'extension'
@@ -37,21 +38,15 @@ const converObj = (json) => {
         }
       })
 
-      if (itemValues[index].type === 'object' || itemValues[index].type === 'array') {
+      if (itemValues[index].type === 'object') {
         xml += `<${d} ${attrString}>`
         xml += `${converObj(itemValues[index])}`
         xml += `</${d}>`
+      } else if (itemValues[index].type === 'array') {
+        xml += `<${d} array="true" ${attrString}>`
+        xml += `${converObj(itemValues[index].items)}`
+        xml += `</${d}>`
       } else {
-        if (itemValues[index].type === 'array') {
-          if (itemValues[index].items[0] && itemValues[index].items[0].properties) {
-            const itemKeys = Object.keys(itemValues[index].items[0].properties)
-            itemKeys.forEach((d) => {
-              if (primaryAttributes.indexOf(d) === -1) {
-                attrString += ` ${d}="${itemValues[index].items[0].properties[d]}"`
-              }
-            })
-          }
-        }
         if (primaryAttributes.indexOf(d) === -1) {
           xml += `<${d}${attrString}>`
           xml += `${defaultString}`
@@ -62,8 +57,9 @@ const converObj = (json) => {
   }
 
   if (json.type === 'array') {
-    const itemKeys = (json.items && json.items[0] && Object.keys(json.items[0].properties)) || []
-    const itemValues = (json.items && json.items[0] && Object.values(json.items[0].properties)) || []
+    const xmlItem = json.items[0]
+    const itemKeys = (xmlItem && xmlItem && Object.keys(xmlItem.properties)) || []
+    const itemValues = (xmlItem && xmlItem && Object.values(xmlItem.properties)) || []
 
     itemKeys.forEach((d, index) => {
       let attrString = ''
