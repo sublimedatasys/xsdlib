@@ -336,20 +336,37 @@ const generateSimpleContent = (d, coma = false, restrictions = []) => {
     attrJson = `,"${attr.attribute_name}":"${attr.attribute_default || ''}"`
   }
 
-  if (ext.attribute_base) {
-    let restriction = restrictions.find((d) => d.name === ext.attribute_base)
+  if (ext.attribute_base||ext['xs:restriction']) {
+    let restriction = !ext.attribute_base ? { restriction: ext['xs:restriction'] } : restrictions.find((d) => d.name === ext.attribute_base)
     if (restriction) {
       restriction = restriction.restriction
       let minLength = restriction && restriction['xs:minLength'] && restriction['xs:minLength']['attribute_value']
       let maxLength = restriction && restriction['xs:maxLength'] && restriction['xs:maxLength']['attribute_value']
+      let minInclusive = restriction && restriction['xs:minInclusive'] && restriction['xs:minInclusive']['attribute_value']
+      let maxInclusive = restriction && restriction['xs:maxInclusive'] && restriction['xs:maxInclusive']['attribute_value']
+      let pattern = restriction && restriction['xs:pattern'] && restriction['xs:pattern']['attribute_value']
       if (minLength) attrJson += `,"minLength":"${minLength}"`
       if (maxLength) attrJson += `,"maxLength":"${maxLength}"`
+      if (minInclusive) attrJson += `,"minimum":${minInclusive}`
+      if (maxInclusive) attrJson += `,"maximum":${maxInclusive}`
+      if (pattern) attrJson += `,"pattern":"${pattern}"`
     }
   }
   jsonString += `"${d.attribute_name}":{"type":"${type.replace('xs:', '')}"${attrJson}}${coma ? ',' : ''}`
   return jsonString
 }
-
+const getAttributeJson = (extraAttributeKey, extraAttributeValue)=>{
+  const attributeJson = '';
+  if (extraAttributeKey.indexOf('xs:attribute') !== -1) {
+    let items = extraAttributeValue[extraAttributeKey.indexOf('xs:attribute')]
+    if (Array.isArray(items)) {
+      items.map((d) => {
+        attributeJson += `,"${d.attribute_name}":"${d.attribute_default || ''}"`
+      })
+    }
+  }
+  return attributeJson;
+}
 const generateJson = (keys, values, restrictions = [], attributes = []) => {
   let jsonString = ``
   let keyIndex = keys.indexOf('attribute_name')
@@ -390,19 +407,10 @@ const generateJson = (keys, values, restrictions = [], attributes = []) => {
             let extraAttributeKey = Object.keys(d['xs:complexType'])
             let extraAttributeValue = Object.values(d['xs:complexType'])
 
-            let attributeJson = ''
-
-            if (extraAttributeKey.indexOf('xs:attribute') !== -1) {
-              let items = extraAttributeValue[extraAttributeKey.indexOf('xs:attribute')]
-              if (Array.isArray(items)) {
-                items.map((d) => {
-                  attributeJson += `,"${d.attribute_name}":"${d.attribute_default || ''}"`
-                })
-              }
-            }
+            let attributeJson = getAttributeJson(extraAttributeKey, extraAttributeValue)
 
             if (maxBound) {
-              jsonString += `"${d.attribute_name}":{"type":"array"${attributeJson},"items":{"type":"object","properties":${generateJson(keys2, values2, restrictions)}}${coma ? ',' : ''}}`
+              jsonString += `"${d.attribute_name}":{"type":"array"${attributeJson},"items":{"type":"object","properties":${generateJson(keys2, values2, restrictions)}}}${coma ? ',' : ''}`
             } else {
               let extraAttributeKey = Object.keys(d['xs:complexType'])
               let extraAttributeValue = Object.values(d['xs:complexType'])
@@ -431,7 +439,15 @@ const generateJson = (keys, values, restrictions = [], attributes = []) => {
               } else if (d1['xs:complexType']) {
                 let keys2 = Object.keys(d1['xs:complexType']['xs:sequence'])
                 let values2 = Object.values(d1['xs:complexType']['xs:sequence'])
-                jsonString += `"${d1.attribute_name}":{"type":"object","properties":${generateJson(keys2, values2, restrictions)}}${coma2 ? ',' : ''}`
+                const maxBound1 = d1.attribute_maxOccurs === 'unbounded'
+
+                const attributeJson = getAttributeJson(keys2, values2)
+
+                if (maxBound1) {
+                  jsonString += `"${d1.attribute_name}":{"type":"array"${attributeJson},"items":{"type":"object","properties":${generateJson(keys2, values2, restrictions)}}}${coma ? ',' : ''}`
+                } else {
+                  jsonString += `"${d1.attribute_name}":{"type":"object","properties":${generateJson(keys2, values2, restrictions)}}${coma2 ? ',' : ''}`
+                }
               } else {
                 let maxBound = d1.attribute_maxOccurs === 'unbounded'
                 if (maxBound) {
@@ -578,12 +594,45 @@ const simplifyJson = (jsonObj) => {
       })
     }
 
+    if (!itemObj && otherProps['xs:simpleType']) {
+      itemObj = otherProps['xs:simpleType'];
+      itemKey = 'xs:simpleType';
+    }
+
     if (!itemKey && !itemObj) {
       return null
     }
 
     if (itemKey === 'xs:complexType') {
-      itemObj['xs:sequence']['xs:element'] = renderElements(itemObj['xs:sequence']['xs:element'])
+      let forRender = null;
+      if(itemObj['xs:sequence'] && itemObj['xs:sequence']['xs:element']){
+        forRender = itemObj['xs:sequence']['xs:element'];
+      }else if(
+        itemObj['xs:complexContent'] && 
+        itemObj['xs:complexContent']['xs:extension'] && 
+        itemObj['xs:complexContent']['xs:extension']['xs:sequence']['xs:element']
+      ){
+        itemObj['xs:sequence'] = itemObj['xs:complexContent']['xs:extension']['xs:sequence'];
+        forRender = itemObj['xs:complexContent']['xs:extension']['xs:sequence']['xs:element'];
+        const attribute_base = itemObj['xs:complexContent']['xs:extension']['attribute_base'];
+        if(attribute_base){
+          const baseType = getObjType(attribute_base, itemObj['attribute_name'], {});
+          const baseTypeElements = baseType && 
+          baseType[itemKey] && 
+          baseType[itemKey]['xs:sequence'] &&
+          baseType[itemKey]['xs:sequence']['xs:element']
+          if(
+            baseTypeElements
+          ){
+            if(forRender.length){
+              forRender = forRender.concat(baseTypeElements);
+            }else{
+              forRender = [forRender].concat(baseTypeElements);
+            }
+          }
+        }
+      }
+      itemObj['xs:sequence']['xs:element'] = renderElements(forRender)
       let l = { attribute_name: name, [itemKey]: itemObj }
       Object.keys(otherProps).forEach((d) => {
         l[d] = otherProps[d]
@@ -600,7 +649,16 @@ const simplifyJson = (jsonObj) => {
   const renderSimpleType = (item, name) => {
     if (item['xs:restriction']) {
       const obj = item['xs:restriction']
-      return { attribute_name: name, attribute_type: obj.attribute_base }
+      return {
+        attribute_name: name,
+        attribute_type: obj.attribute_base,
+        'xs:simpleContent': {
+          'xs:extension':{
+            'attribute_base': item['attribute_name'],
+            'xs:restriction': !item['attribute_name'] ? obj : null
+          }
+        }
+      }
     }
   }
 
@@ -613,7 +671,14 @@ const simplifyJson = (jsonObj) => {
           if (elements2 && !elements2.length) elements2 = [elements2]
           elements[index]['xs:complexType']['xs:sequence']['xs:element'] = renderElements(elements2)
         }
-        if (d.attribute_type && (d.attribute_type.toLowerCase().includes('type') || !d.attribute_type.toLowerCase().includes('xs:'))) {
+        if (
+          d.attribute_type && (
+            d.attribute_type.toLowerCase().includes('type') || 
+            !d.attribute_type.toLowerCase().includes('xs:')
+          )||(
+            !d.attribute_type && d['xs:simpleType']
+          )
+        ) {
           let n = getObjType(d.attribute_type, d.attribute_name, d)
           if (n !== null) {
             elements[index] = n

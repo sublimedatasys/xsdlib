@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="TestElemet" type="TestElement_Struct">
+		<xs:annotation>
+			<xs:documentation>Complex test element</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="TestElement_Struct">
+		<xs:annotation>
+			<xs:documentation>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero ipsa sunt commodi sed minus fuga, cupiditate nobis laudantium? Maxime autem perspiciatis vero neque quos sit, sequi recusandae veniam suscipit saepe. dfghje</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="Middle_Struct">
+				<xs:sequence>
+					<xs:element name="BDt">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:restriction base="BDtLewfPsd">
+									<xs:sequence>
+										<xs:sequence>
+											<xs:element name="Rfvf" type="ApwoeClass_Type">
+												<xs:annotation>
+													<xs:documentation>Lorem ipsum dolor sit amet consectetur, adipisicing elit. In sint hic dignissimos sapiente voluptatem autem ex ratione consequatur debitis ut rerum iste magnam, amet incidunt. Officia exercitationem accusantium amet molestias.</xs:documentation>
+												</xs:annotation>
+											</xs:element>
+										</xs:sequence>
+										<xs:sequence>
+											<xs:element name="AdipisicingInfo" type="Adipisicing_Struct">
+												<xs:annotation>
+													<xs:documentation>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae accusantium eius dolor nisi debitis velit quam aut? Incidunt labore iste quas illo ipsam magnam aspernatur odio laudantium, dolorum amet nobis.</xs:documentation>
+												</xs:annotation>
+											</xs:element>
+											<xs:element name="StusGqp" type="String64_Type">
+												<xs:annotation>
+													<xs:documentation>Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident dolores qui earum sapiente? Distinctio vel nesciunt perferendis odio voluptatibus vitae officia reiciendis obcaecati quos, suscipit omnis inventore rerum quas debitis!</xs:documentation>
+												</xs:annotation>
+											</xs:element>
+											<xs:element name="DateDupqg" type="Date_Type">
+												<xs:annotation>
+													<xs:documentation>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis maiores, sed quasi et laboriosam nam aliquid voluptate vero laudantium mollitia praesentium ducimus qui repudiandae soluta inventore excepturi non eligendi sunt!</xs:documentation>
+												</xs:annotation>
+											</xs:element>
+										</xs:sequence>
+										<xs:sequence>
+											<xs:element name="HupqId" type="String65_Type" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil fugit quod odio excepturi, dolores harum vero? Iste consectetur non ratione molestiae animi, accusantium officiis cumque, enim rerum sapiente nemo necessitatibus!</xs:documentation>
+												</xs:annotation>
+											</xs:element>
+											<xs:element name="StPq" type="String32_Type">
+												<xs:annotation>
+													<xs:documentation>Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet cum accusamus maxime voluptatibus porro qui, velit dignissimos aliquid suscipit esse vel architecto quidem fugit aperiam ut exercitationem. Tenetur, eius explicabo.</xs:documentation>
+												</xs:annotation>
+											</xs:element>
+										</xs:sequence>
+									</xs:sequence>
+								</xs:restriction>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Middle_Struct">
+		<xs:annotation>
+			<xs:documentation>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolore, repellat quasi. Nisi nesciunt laboriosam odio non? Cumque accusantium explicabo maiores incidunt reprehenderit excepturi, perspiciatis, repudiandae iure, aspernatur ipsa ullam debitis!</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="Root_Struct">
+				<xs:sequence>
+					<xs:element name="MidCketysqDate" type="Date_Type">
+						<xs:annotation>
+							<xs:documentation>Dolor incidunt libero earum fuga. Soluta voluptatem omnis ipsum aperiam libero magnam, dolorum molestiae corrupti assumenda voluptatum voluptate repellendus labore, numquam earum.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MidCketysqQPwo" type="AkdjId_Struct">
+						<xs:annotation>
+							<xs:documentation>Maxime, quae incidunt facere non voluptatibus natus.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MidCnfhibqQPwo" type="AkdjId_Struct" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Veritatis harum aliquam eligendi natus aperiam quo, recusandae velit ea enim illo, optio, beatae culpa!</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MidLtncrbqQPwo" type="Ledcrbq_Struct" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Obcaecati soluta labore et. Laborum illo tempore, molestiae eius quam, doloremque reprehenderit beatae accusantium earum distinctio minus harum alias sed dicta!</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Root_Struct">
+		<xs:annotation>
+			<xs:documentation>Root structura</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Field1" type="C1_Type">
+				<xs:annotation>
+					<xs:documentation>Field first, Lorem ipsum dolor sit amet consectetur adipisicing elit.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FieldTm" type="DateTime_Type">
+				<xs:annotation>
+					<xs:documentation>Date time Architecto quisquam veritatis fugiat unde.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SomeName" type="SomeName_Type">
+				<xs:annotation>
+					<xs:documentation>Some name Optio sapiente pariatur aut amet qui!</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SomeId" type="SomeId_Type">
+				<xs:annotation>
+					<xs:documentation>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nam sunt, debitis doloremque suscipit eaque aspernatur consequuntur repudiandae minus impedit illo, qui, amet officia ut incidunt architecto provident quis distinctio! Minima.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ComplexField2" type="BdsIswer_Struct">
+				<xs:annotation>
+					<xs:documentation>Repellendus deserunt unde totam.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SomeIdVariation" type="SomeIdVariation48_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Some id variation Sapiente error cum atque quae esse expedita nesciunt, velit optio odio perspiciatis exercitationem at nihil consequuntur praesentium nostrum ipsam quis ullam est!</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Adipisicing_Struct">
+		<xs:annotation>
+			<xs:documentation>Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam quod beatae, sit, debitis rerum molestias asperiores nam ad libero nostrum, cumque optio soluta? Architecto doloribus fugiat ullam voluptatem, magni quo?</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ElitType" type="String36_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolores ut blanditiis, quia ipsum consectetur deserunt hic quisquam! Nisi commodi nihil vero aliquam, ducimus ut, atque accusamus necessitatibus quasi inventore ullam.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UeyrQAZ" type="String32_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore magni nobis quos eaque quisquam quas enim, omnis rerum nostrum quae sunt. Fugit ab dolorem eos nobis tempore possimus dignissimos repellendus.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UeyrXSW" type="String32_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum totam deleniti quam quos suscipit dolorum cumque autem fugiat vel voluptate corrupti fuga inventore corporis at accusantium dolore amet, eius tempore!</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+  
+	<xs:complexType name="BDtLewfPsd">
+		<xs:annotation>
+			<xs:documentation>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aperiam aut facilis vero impedit iure harum sint totam distinctio! Quis quidem voluptate ipsum animi voluptatum fuga aliquid. Quaerat fugiat modi commodi.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="BDtPrasd">
+				<xs:sequence>
+					<xs:element name="SdsfwId" type="String65_Type" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Kfsdw sdfu</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SdsfSef" type="String32_Type" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>SDfs sdfs</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="BdsIswer_Struct">
+		<xs:annotation>
+			<xs:documentation>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Vero, sequi optio accusantium porro, minus praesentium provident aspernatur id autem temporibus obcaecati quibusdam blanditiis iste nihil consequatur, recusandae quo inventore ad?</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DefsId" type="DefsId_Type">
+				<xs:annotation>
+					<xs:documentation>Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus natus minus id porro unde velit fuga commodi, aliquid voluptatem. Dolor aspernatur ipsum nam fugit? Cumque corporis numquam porro accusamus expedita!</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DepartId" type="ApwoeId_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Id Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium dolorum voluptatibus voluptates blanditiis! Perferendis molestias iusto eum facilis aliquam labore eveniet quae odit. Eos ex facilis quis, nam commodi similique?</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ShortCodeField" type="ShortCode_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Dignissimos sit soluta hic facilis cumque earum fuga officia incidunt perferendis explicabo.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Ledcrbq_Struct">
+		<xs:annotation>
+			<xs:documentation>Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam rerum numquam nostrum soluta, eveniet laudantium iure eaque tenetur ipsam? Sint corporis nam nemo quas est in deleniti animi quod eum.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Gjljlb" type="Bool_Type">
+				<xs:annotation>
+					<xs:documentation>Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque facilis deleniti qui laboriosam, fuga inventore fugiat. Atque aut, ad repellat consequuntur ab ipsum quibusdam unde, commodi nesciunt enim perspiciatis repudiandae?</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Surei" type="AkdjId_Struct">
+				<xs:annotation>
+					<xs:documentation>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat, animi. Officiis odit rerum illum debitis ullam adipisci laborum? Officiis totam quisquam sequi et adipisci, odit nihil quod. Nobis, dolorum iste?</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AkdjId_Struct" final="#all">
+		<xs:annotation>
+			<xs:documentation>Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis dicta dolorum, vel vero repudiandae soluta saepe assumenda quis cum quia, esse minus unde commodi impedit necessitatibus harum placeat culpa ad!</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Alks" type="Long_Type">
+				<xs:annotation>
+					<xs:documentation>Id Alks</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Ruty" type="Long_Type">
+				<xs:annotation>
+					<xs:documentation>Id Ruty</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Eiwo" type="Long_Type">
+				<xs:annotation>
+					<xs:documentation>Id Eiwo</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+  <xs:complexType name="BDtPrasd">
+		<xs:annotation>
+			<xs:documentation>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque perspiciatis possimus corrupti laboriosam reiciendis repellendus iure? Cum recusandae distinctio officiis ipsa ratione voluptatum eum provident officia, fugiat, maiores esse nesciunt.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="BDtBase">
+				<xs:sequence>
+					<xs:element name="AdipisicingInfo" type="Adipisicing_Struct">
+						<xs:annotation>
+							<xs:documentation>Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi neque iste voluptates ipsum velit id est assumenda laboriosam nulla rem quo consectetur accusamus ducimus maiores, quis sapiente magnam incidunt at?</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Fsap" type="String64_Type" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolores cupiditate delectus atque quae, error, sequi at quas unde earum provident expedita recusandae assumenda sint corrupti odio laboriosam. Saepe, voluptatem laborum!</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DateGFwp" type="Date_Type" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odit impedit cumque accusamus porro! Quo, nisi corporis obcaecati temporibus unde quisquam odit dignissimos! Voluptates sequi placeat eveniet perferendis repellat cumque numquam!</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Npwfd" type="String4000_Type" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Numquam, voluptates voluptatem eius mollitia cupiditate odio, nemo qui dolorum placeat alias sunt. Nam non voluptatibus, itaque magni similique saepe! Maxime, nisi.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+<xs:complexType name="BDtBase" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Base</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Prasd" type="Prasd_Struct">
+				<xs:annotation>
+					<xs:documentation>Prasd</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Prasd_Struct">
+		<xs:annotation>
+			<xs:documentation>Prasd asdfa</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Apwoe" type="ApwoeId_Struct" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Prasd dfe</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Ghbdtn" type="GhbdtnPrasd_Struct" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Prasd fgher</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ApwoeId_Struct" final="#all">
+		<xs:annotation>
+			<xs:documentation>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet totam delectus voluptate nisi, animi nesciunt magni accusamus ut enim, earum eligendi magnam laboriosam maiores autem tempore quas excepturi quae temporibus.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Pif" type="ApwoeId_Type">
+				<xs:annotation>
+					<xs:documentation>Id kwdfp</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Gts" type="ApwoeClass_Type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Class kwdfp</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GhbdtnId_Struct" final="#all">
+		<xs:annotation>
+			<xs:documentation>Ghwpa kwdfp  ghwp</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Hps" type="Long_Type">
+				<xs:annotation>
+					<xs:documentation>Id kwdfp</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Unc" type="Long_Type">
+				<xs:annotation>
+					<xs:documentation>Id sfdwg</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Xfw" type="Long_Type">
+				<xs:annotation>
+					<xs:documentation>Id dghfd</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GhbdtnPrasd_Struct">
+		<xs:annotation>
+			<xs:documentation>Ghwpa fghje ghwp</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Sdfs" type="GhbdtnId_Struct">
+				<xs:annotation>
+					<xs:documentation>Id dfghje</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Fuhbv" type="Long_Type">
+				<xs:annotation>
+					<xs:documentation>Id ghje sdfghd</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Condition" type="Long_Type">
+				<xs:annotation>
+					<xs:documentation>Id fdgw</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="DefsId_Type">
+		<xs:annotation>
+			<xs:documentation>Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus delectus aliquam corporis quos molestiae quasi facilis eum accusantium sed quaerat nisi, odit nostrum dolor, aspernatur deserunt, voluptates similique tenetur architecto!</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ApwoeClass_Type">
+		<xs:annotation>
+			<xs:documentation>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Mollitia odit rerum explicabo eos facilis quasi ea, officiis nesciunt commodi esse suscipit culpa maiores magni aspernatur minus aperiam facere tenetur expedita?</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="32"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ApwoeId_Type">
+		<xs:annotation>
+			<xs:documentation>Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat magnam quidem beatae, alias amet maiores enim nam dignissimos necessitatibus est voluptas veniam deleniti blanditiis recusandae voluptatum quasi esse atque optio! </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:long"/>
+	</xs:simpleType>
+	<xs:simpleType name="String64_Type">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="64"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="String65_Type">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="65"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="String32_Type">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="32"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ShortCode_Type">
+		<xs:annotation>
+			<xs:documentation>Short code</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Long_Type">
+		<xs:annotation>
+			<xs:documentation/>
+		</xs:annotation>
+		<xs:restriction base="xs:long"/>
+	</xs:simpleType>
+	<xs:simpleType name="Bool_Type">
+		<xs:restriction base="xs:boolean"/>
+	</xs:simpleType>
+	<xs:simpleType name="SomeName_Type">
+		<xs:annotation>
+			<xs:documentation>Some name type Quis ab quisquam iure.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="36"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SomeId_Type">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="36"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SomeIdVariation48_Type">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([0-9]|[A-F]){48}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Date_Type">
+		<xs:annotation>
+			<xs:documentation>Date</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:date"/>
+	</xs:simpleType>
+	<xs:simpleType name="String4000_Type">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="4000"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
