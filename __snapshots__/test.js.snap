@@ -1,0 +1,932 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`process xsd 1`] = `
+Object {
+  "properties": Object {
+    "Invoice": Object {
+      "properties": Object {
+        "cac:AccountingCustomerParty": Object {
+          "properties": Object {
+            "cac:Party": Object {
+              "properties": Object {
+                "cac:Contact": Object {
+                  "properties": Object {
+                    "cbc:ElectronicMail": Object {
+                      "default": "lj@buyer.co.nz",
+                      "format": "email",
+                      "type": "string",
+                    },
+                    "cbc:Name": Object {
+                      "default": "Lisa Johnson",
+                      "type": "string",
+                    },
+                    "cbc:Telephone": Object {
+                      "default": 261234567,
+                      "type": "integer",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cac:PartyIdentification": Object {
+                  "properties": Object {
+                    "cbc:ID": Object {
+                      "default": 9429033591476,
+                      "schemeID": "0088",
+                      "type": "integer",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cac:PartyLegalEntity": Object {
+                  "properties": Object {
+                    "cbc:CompanyID": Object {
+                      "default": 9429033591476,
+                      "schemeID": "0088",
+                      "type": "integer",
+                    },
+                    "cbc:RegistrationName": Object {
+                      "default": "Buyer Official Name",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cac:PartyName": Object {
+                  "properties": Object {
+                    "cbc:Name": Object {
+                      "default": "Trotters Trading Co Ltd",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cac:PartyTaxScheme": Object {
+                  "properties": Object {
+                    "cac:TaxScheme": Object {
+                      "properties": Object {
+                        "cbc:ID": Object {
+                          "default": "GST",
+                          "type": "string",
+                        },
+                      },
+                      "type": "object",
+                    },
+                    "cbc:CompanyID": Object {
+                      "default": 9429033591476,
+                      "type": "integer",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cac:PostalAddress": Object {
+                  "properties": Object {
+                    "cac:Country": Object {
+                      "properties": Object {
+                        "cbc:IdentificationCode": Object {
+                          "default": "NZ",
+                          "type": "string",
+                        },
+                      },
+                      "type": "object",
+                    },
+                    "cbc:AdditionalStreetName": Object {
+                      "default": "Po box 878",
+                      "type": "string",
+                    },
+                    "cbc:CityName": Object {
+                      "default": "Auckland",
+                      "type": "string",
+                    },
+                    "cbc:PostalZone": Object {
+                      "default": 1234,
+                      "type": "integer",
+                    },
+                    "cbc:StreetName": Object {
+                      "default": "100 Queen Street",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cbc:EndpointID": Object {
+                  "default": 9429033591476,
+                  "schemeID": "0088",
+                  "type": "integer",
+                },
+              },
+              "type": "object",
+            },
+          },
+          "type": "object",
+        },
+        "cac:AccountingSupplierParty": Object {
+          "properties": Object {
+            "cac:Party": Object {
+              "properties": Object {
+                "cac:Contact": Object {
+                  "properties": Object {
+                    "cbc:ElectronicMail": Object {
+                      "default": "ronald.macdonald@qualitygoods.com.au",
+                      "format": "email",
+                      "type": "string",
+                    },
+                    "cbc:Name": Object {
+                      "default": "Ronald MacDonald",
+                      "type": "string",
+                    },
+                    "cbc:Telephone": Object {
+                      "default": "Mobile 0430123456",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cac:PartyIdentification": Object {
+                  "properties": Object {
+                    "cbc:ID": Object {
+                      "default": 47555222000,
+                      "type": "integer",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cac:PartyLegalEntity": Object {
+                  "properties": Object {
+                    "cbc:CompanyID": Object {
+                      "default": 47555222000,
+                      "schemeID": "0151",
+                      "type": "integer",
+                    },
+                    "cbc:CompanyLegalForm": Object {
+                      "default": "Partnership",
+                      "type": "string",
+                    },
+                    "cbc:RegistrationName": Object {
+                      "default": "Supplier Official Name Ltd",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cac:PartyName": Object {
+                  "properties": Object {
+                    "cbc:Name": Object {
+                      "default": "Supplier Trading Name Ltd",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cac:PartyTaxScheme": Object {
+                  "properties": Object {
+                    "cac:TaxScheme": Object {
+                      "properties": Object {
+                        "cbc:ID": Object {
+                          "default": "GST",
+                          "type": "string",
+                        },
+                      },
+                      "type": "object",
+                    },
+                    "cbc:CompanyID": Object {
+                      "default": 47555222000,
+                      "type": "integer",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cac:PostalAddress": Object {
+                  "properties": Object {
+                    "cac:Country": Object {
+                      "properties": Object {
+                        "cbc:IdentificationCode": Object {
+                          "default": "AU",
+                          "type": "string",
+                        },
+                      },
+                      "type": "object",
+                    },
+                    "cbc:AdditionalStreetName": Object {
+                      "default": "Postbox 123",
+                      "type": "string",
+                    },
+                    "cbc:CityName": Object {
+                      "default": "Harrison",
+                      "type": "string",
+                    },
+                    "cbc:PostalZone": Object {
+                      "default": 2912,
+                      "type": "integer",
+                    },
+                    "cbc:StreetName": Object {
+                      "default": "Main street 1",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cbc:EndpointID": Object {
+                  "default": 47555222000,
+                  "schemeID": "0151",
+                  "type": "integer",
+                },
+              },
+              "type": "object",
+            },
+          },
+          "type": "object",
+        },
+        "cac:AllowanceCharge": Object {
+          "properties": Object {
+            "cac:TaxCategory": Object {
+              "properties": Object {
+                "cac:TaxScheme": Object {
+                  "properties": Object {
+                    "cbc:ID": Object {
+                      "default": "GST",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cbc:ID": Object {
+                  "default": "S",
+                  "type": "string",
+                },
+                "cbc:Percent": Object {
+                  "default": 10,
+                  "type": "integer",
+                },
+              },
+              "type": "object",
+            },
+            "cbc:AllowanceChargeReason": Object {
+              "default": "Shipping and Handling",
+              "type": "string",
+            },
+            "cbc:AllowanceChargeReasonCode": Object {
+              "default": "SAA",
+              "type": "string",
+            },
+            "cbc:Amount": Object {
+              "currencyID": "AUD",
+              "properties": Object {},
+              "type": "object",
+            },
+            "cbc:BaseAmount": Object {
+              "currencyID": "AUD",
+              "properties": Object {},
+              "type": "object",
+            },
+            "cbc:ChargeIndicator": Object {
+              "default": true,
+              "type": "boolean",
+            },
+            "cbc:MultiplierFactorNumeric": Object {
+              "default": "",
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "cac:BillingReference": Object {
+          "properties": Object {
+            "cac:InvoiceDocumentReference": Object {
+              "properties": Object {
+                "cbc:ID": Object {
+                  "default": "PrecedingInvoiceReference",
+                  "type": "string",
+                },
+                "cbc:IssueDate": Object {
+                  "default": "2019-07-30",
+                  "format": "date",
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+          },
+          "type": "object",
+        },
+        "cac:ContractDocumentReference": Object {
+          "properties": Object {
+            "cbc:ID": Object {
+              "default": "CD-REF",
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "cac:Delivery": Object {
+          "properties": Object {
+            "cac:DeliveryLocation": Object {
+              "properties": Object {
+                "cac:Address": Object {
+                  "properties": Object {
+                    "cac:AddressLine": Object {
+                      "properties": Object {
+                        "cbc:Line": Object {
+                          "default": "Unit 1",
+                          "type": "string",
+                        },
+                      },
+                      "type": "object",
+                    },
+                    "cac:Country": Object {
+                      "properties": Object {
+                        "cbc:IdentificationCode": Object {
+                          "default": "NZ",
+                          "type": "string",
+                        },
+                      },
+                      "type": "object",
+                    },
+                    "cbc:AdditionalStreetName": Object {
+                      "default": "Building 56",
+                      "type": "string",
+                    },
+                    "cbc:CityName": Object {
+                      "default": "Auckland",
+                      "type": "string",
+                    },
+                    "cbc:CountrySubentity": Object {
+                      "default": "Ponsonby",
+                      "type": "string",
+                    },
+                    "cbc:PostalZone": Object {
+                      "default": 1234,
+                      "type": "integer",
+                    },
+                    "cbc:StreetName": Object {
+                      "default": "Delivery street 2",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cbc:ID": Object {
+                  "default": 9429033591476,
+                  "schemeID": "0088",
+                  "type": "integer",
+                },
+              },
+              "type": "object",
+            },
+            "cac:DeliveryParty": Object {
+              "properties": Object {
+                "cac:PartyName": Object {
+                  "properties": Object {
+                    "cbc:Name": Object {
+                      "default": "Delivery party Name",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+              },
+              "type": "object",
+            },
+            "cbc:ActualDeliveryDate": Object {
+              "default": "2019-06-01",
+              "format": "date",
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "cac:DespatchDocumentReference": Object {
+          "properties": Object {
+            "cbc:ID": Object {
+              "default": "DDR-REF",
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "cac:InvoiceLine": Object {
+          "properties": Object {
+            "cac:DocumentReference": Object {
+              "properties": Object {
+                "cbc:DocumentTypeCode": Object {
+                  "default": 130,
+                  "type": "integer",
+                },
+                "cbc:ID": Object {
+                  "default": 9000074677,
+                  "schemeID": "HWB",
+                  "type": "integer",
+                },
+              },
+              "type": "object",
+            },
+            "cac:InvoicePeriod": Object {
+              "properties": Object {
+                "cbc:EndDate": Object {
+                  "default": "2019-07-30",
+                  "format": "date",
+                  "type": "string",
+                },
+                "cbc:StartDate": Object {
+                  "default": "2019-06-01",
+                  "format": "date",
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "cac:Item": Object {
+              "properties": Object {
+                "cac:BuyersItemIdentification": Object {
+                  "properties": Object {
+                    "cbc:ID": Object {
+                      "default": "W659590",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cac:ClassifiedTaxCategory": Object {
+                  "properties": Object {
+                    "cac:TaxScheme": Object {
+                      "properties": Object {
+                        "cbc:ID": Object {
+                          "default": "GST",
+                          "type": "string",
+                        },
+                      },
+                      "type": "object",
+                    },
+                    "cbc:ID": Object {
+                      "default": "S",
+                      "type": "string",
+                    },
+                    "cbc:Percent": Object {
+                      "default": 10,
+                      "type": "integer",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cac:CommodityClassification": Object {
+                  "properties": Object {
+                    "cbc:ItemClassificationCode": Object {
+                      "default": 9348023,
+                      "listID": "SRV",
+                      "type": "integer",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cac:OriginCountry": Object {
+                  "properties": Object {
+                    "cbc:IdentificationCode": Object {
+                      "default": "AU",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cac:SellersItemIdentification": Object {
+                  "properties": Object {
+                    "cbc:ID": Object {
+                      "default": "WG546767",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cac:StandardItemIdentification": Object {
+                  "properties": Object {
+                    "cbc:ID": Object {
+                      "default": "WG546767",
+                      "schemeID": "0002",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cbc:Description": Object {
+                  "default": "Widgets True and Fair",
+                  "title": "abc",
+                  "type": "string",
+                },
+                "cbc:Name": Object {
+                  "default": "True-Widgets",
+                  "type": "string",
+                },
+              },
+              "title": "abc",
+              "type": "object",
+            },
+            "cac:OrderLineReference": Object {
+              "properties": Object {
+                "cbc:LineID": Object {
+                  "default": 123,
+                  "type": "integer",
+                },
+              },
+              "type": "object",
+            },
+            "cac:Price": Object {
+              "properties": Object {
+                "cac:AllowanceCharge": Object {
+                  "properties": Object {
+                    "cbc:Amount": Object {
+                      "currencyID": "AUD",
+                      "default": 12,
+                      "title": "123",
+                      "type": "integer",
+                    },
+                    "cbc:BaseAmount": Object {
+                      "currencyID": "AUD",
+                      "default": 29.99,
+                      "type": "number",
+                    },
+                    "cbc:ChargeIndicator": Object {
+                      "default": "",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cbc:PriceAmount": Object {
+                  "default": 29.99,
+                  "type": "number",
+                },
+              },
+              "type": "object",
+            },
+            "cbc:AccountingCost": Object {
+              "default": "Consulting Fees",
+              "type": "string",
+            },
+            "cbc:ID": Object {
+              "default": 1,
+              "type": "integer",
+            },
+            "cbc:InvoicedQuantity": Object {
+              "default": 10,
+              "type": "integer",
+              "unitCode": "E99",
+            },
+            "cbc:LineExtensionAmount": Object {
+              "currencyID": "AUD",
+              "default": 299.9,
+              "type": "number",
+            },
+            "cbc:Note": Object {
+              "default": "Texts Giving More Info about the Invoice Line",
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "cac:InvoicePeriod": Object {
+          "properties": Object {
+            "cbc:DescriptionCode": Object {
+              "default": 432,
+              "type": "integer",
+            },
+            "cbc:EndDate": Object {
+              "default": "2019-07-30",
+              "format": "date",
+              "type": "string",
+            },
+            "cbc:StartDate": Object {
+              "default": "2019-06-01",
+              "format": "date",
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "cac:LegalMonetaryTotal": Object {
+          "properties": Object {
+            "cbc:ChargeTotalAmount": Object {
+              "currencyID": "AUD",
+              "properties": Object {},
+              "type": "object",
+            },
+            "cbc:LineExtensionAmount": Object {
+              "currencyID": "AUD",
+              "default": 1487.4,
+              "type": "number",
+            },
+            "cbc:PayableAmount": Object {
+              "currencyID": "AUD",
+              "default": 1636.14,
+              "type": "number",
+            },
+            "cbc:PrepaidAmount": Object {
+              "currencyID": "AUD",
+              "properties": Object {},
+              "type": "object",
+            },
+            "cbc:TaxExclusiveAmount": Object {
+              "currencyID": "AUD",
+              "default": 1487.4,
+              "type": "number",
+            },
+            "cbc:TaxInclusiveAmount": Object {
+              "currencyID": "AUD",
+              "default": 1636.14,
+              "type": "number",
+            },
+          },
+          "type": "object",
+        },
+        "cac:OrderReference": Object {
+          "properties": Object {
+            "cbc:ID": Object {
+              "default": "PurchaseOrderReference",
+              "type": "string",
+            },
+            "cbc:SalesOrderID": Object {
+              "default": 12345678,
+              "type": "integer",
+            },
+          },
+          "type": "object",
+        },
+        "cac:OriginatorDocumentReference": Object {
+          "properties": Object {
+            "cbc:ID": Object {
+              "default": "OD-REF",
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "cac:PayeeParty": Object {
+          "properties": Object {
+            "cac:PartyIdentification": Object {
+              "properties": Object {
+                "cbc:ID": Object {
+                  "default": 91888222000,
+                  "type": "integer",
+                },
+              },
+              "type": "object",
+            },
+            "cac:PartyLegalEntity": Object {
+              "properties": Object {
+                "cbc:CompanyID": Object {
+                  "default": 9429033591476,
+                  "schemeID": "0088",
+                  "type": "integer",
+                },
+              },
+              "type": "object",
+            },
+            "cac:PartyName": Object {
+              "properties": Object {
+                "cbc:Name": Object {
+                  "default": "Mr Anderson",
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+          },
+          "type": "object",
+        },
+        "cac:PaymentMeans": Object {
+          "properties": Object {
+            "cac:PayeeFinancialAccount": Object {
+              "properties": Object {
+                "cac:FinancialInstitutionBranch": Object {
+                  "properties": Object {
+                    "cbc:ID": Object {
+                      "default": "BSB Number",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cbc:ID": Object {
+                  "default": "AccountNumber",
+                  "type": "string",
+                },
+                "cbc:Name": Object {
+                  "default": "AccountName",
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "cbc:PaymentID": Object {
+              "default": "PaymentReferenceText",
+              "type": "string",
+            },
+            "cbc:PaymentMeansCode": Object {
+              "default": 30,
+              "name": "Credit transfer",
+              "type": "integer",
+            },
+          },
+          "type": "object",
+        },
+        "cac:PaymentTerms": Object {
+          "properties": Object {
+            "cbc:Note": Object {
+              "default": "Payment within 30 days",
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "cac:ProjectReference": Object {
+          "properties": Object {
+            "cbc:ID": Object {
+              "default": "PR-REF",
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "cac:ReceiptDocumentReference": Object {
+          "properties": Object {
+            "cbc:ID": Object {
+              "default": "RD-REF",
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "cac:TaxRepresentativeParty": Object {
+          "properties": Object {
+            "cac:PartyName": Object {
+              "properties": Object {
+                "cbc:Name": Object {
+                  "default": "Mr Wilson",
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "cac:PartyTaxScheme": Object {
+              "properties": Object {
+                "cac:TaxScheme": Object {
+                  "properties": Object {
+                    "cbc:ID": Object {
+                      "default": "GST",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cbc:CompanyID": Object {
+                  "default": 9429033591476,
+                  "type": "integer",
+                },
+              },
+              "type": "object",
+            },
+            "cac:PostalAddress": Object {
+              "properties": Object {
+                "cac:AddressLine": Object {
+                  "properties": Object {
+                    "cbc:Line": Object {
+                      "default": "Unit 1",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cac:Country": Object {
+                  "properties": Object {
+                    "cbc:IdentificationCode": Object {
+                      "default": "NZ",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cbc:AdditionalStreetName": Object {
+                  "default": "Po box 878",
+                  "type": "string",
+                },
+                "cbc:CityName": Object {
+                  "default": "Auckland",
+                  "type": "string",
+                },
+                "cbc:CountrySubentity": Object {
+                  "default": "Ponsonby",
+                  "type": "string",
+                },
+                "cbc:PostalZone": Object {
+                  "default": 1234,
+                  "type": "integer",
+                },
+                "cbc:StreetName": Object {
+                  "default": "16 Stout Street",
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+          },
+          "type": "object",
+        },
+        "cac:TaxTotal": Object {
+          "properties": Object {
+            "cac:TaxSubtotal": Object {
+              "properties": Object {
+                "cac:TaxCategory": Object {
+                  "properties": Object {
+                    "cac:TaxScheme": Object {
+                      "properties": Object {
+                        "cbc:ID": Object {
+                          "default": "GST",
+                          "type": "string",
+                        },
+                      },
+                      "type": "object",
+                    },
+                    "cbc:ID": Object {
+                      "default": "S",
+                      "type": "string",
+                    },
+                    "cbc:Percent": Object {
+                      "default": 10,
+                      "type": "integer",
+                    },
+                  },
+                  "type": "object",
+                },
+                "cbc:TaxAmount": Object {
+                  "currencyID": "AUD",
+                  "default": 148.74,
+                  "type": "number",
+                },
+                "cbc:TaxableAmount": Object {
+                  "currencyID": "AUD",
+                  "default": 1487.4,
+                  "type": "number",
+                },
+              },
+              "type": "object",
+            },
+            "cbc:TaxAmount": Object {
+              "currencyID": "AUD",
+              "default": 148.74,
+              "type": "number",
+            },
+          },
+          "type": "object",
+        },
+        "cbc:AccountingCost": Object {
+          "default": "4025:123:4343",
+          "format": "style",
+          "type": "string",
+        },
+        "cbc:BuyerReference": Object {
+          "default": "0150abc",
+          "type": "string",
+        },
+        "cbc:CustomizationID": Object {
+          "default": "urn:cen.eu:en16931:2017#conformant#urn:fdc:peppol.eu:2017:poacc:billing:international:aunz:3.0",
+          "format": "uri",
+          "type": "string",
+        },
+        "cbc:DocumentCurrencyCode": Object {
+          "default": "AUD",
+          "type": "string",
+        },
+        "cbc:DueDate": Object {
+          "default": "2019-08-30",
+          "format": "date",
+          "type": "string",
+        },
+        "cbc:ID": Object {
+          "default": "The ID",
+          "type": "string",
+        },
+        "cbc:InvoiceTypeCode": Object {
+          "default": 380,
+          "type": "integer",
+        },
+        "cbc:IssueDate": Object {
+          "default": "2019-07-29",
+          "format": "date",
+          "type": "string",
+        },
+        "cbc:Note": Object {
+          "default": "Some Blurb about the Invoice",
+          "type": "string",
+        },
+        "cbc:ProfileID": Object {
+          "default": "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0",
+          "format": "uri",
+          "type": "string",
+        },
+      },
+      "type": "object",
+      "xmlns": "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2",
+      "xmlns:cac": "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2",
+      "xmlns:cbc": "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2",
+    },
+  },
+  "type": "object",
+}
+`;

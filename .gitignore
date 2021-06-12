@@ -1,2 +1,5 @@
 /node_modules
 /sample.xml
+XsdLocalTest.*
+XsdDataLocal.*
+.vscode

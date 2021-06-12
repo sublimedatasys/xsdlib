@@ -1,0 +1,381 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Parse complex content xml2json 1`] = `
+Object {
+  "properties": Object {
+    "xs:schema": Object {
+      "attributeFormDefault": "unqualified",
+      "elementFormDefault": "qualified",
+      "properties": Object {
+        "xs:complexType": Object {
+          "items": Object {
+            "name": "TestElement_Struct",
+            "properties": Object {
+              "xs:annotation": Object {
+                "properties": Object {
+                  "xs:documentation": Object {
+                    "default": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero ipsa sunt commodi sed minus fuga, cupiditate nobis laudantium? Maxime autem perspiciatis vero neque quos sit, sequi recusandae veniam suscipit saepe. dfghje",
+                    "type": "string",
+                  },
+                },
+                "type": "object",
+              },
+              "xs:complexContent": Object {
+                "properties": Object {
+                  "xs:extension": Object {
+                    "base": "Middle_Struct",
+                    "properties": Object {
+                      "xs:sequence": Object {
+                        "properties": Object {
+                          "xs:element": Object {
+                            "name": "BDt",
+                            "properties": Object {
+                              "xs:complexType": Object {
+                                "properties": Object {
+                                  "xs:complexContent": Object {
+                                    "properties": Object {
+                                      "xs:restriction": Object {
+                                        "base": "BDtLewfPsd",
+                                        "properties": Object {
+                                          "xs:sequence": Object {
+                                            "properties": Object {
+                                              "xs:sequence": Object {
+                                                "items": Object {
+                                                  "properties": Object {
+                                                    "xs:element": Object {
+                                                      "name": "Rfvf",
+                                                      "properties": Object {
+                                                        "xs:annotation": Object {
+                                                          "properties": Object {
+                                                            "xs:documentation": Object {
+                                                              "default": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. In sint hic dignissimos sapiente voluptatem autem ex ratione consequatur debitis ut rerum iste magnam, amet incidunt. Officia exercitationem accusantium amet molestias.",
+                                                              "type": "string",
+                                                            },
+                                                          },
+                                                          "type": "object",
+                                                        },
+                                                      },
+                                                      "type": "ApwoeClass_Type",
+                                                    },
+                                                  },
+                                                  "type": "object",
+                                                },
+                                                "type": "array",
+                                              },
+                                            },
+                                            "type": "object",
+                                          },
+                                        },
+                                        "type": "object",
+                                      },
+                                    },
+                                    "type": "object",
+                                  },
+                                },
+                                "type": "object",
+                              },
+                            },
+                            "type": "object",
+                          },
+                        },
+                        "type": "object",
+                      },
+                    },
+                    "type": "object",
+                  },
+                },
+                "type": "object",
+              },
+            },
+            "type": "object",
+          },
+          "type": "array",
+        },
+        "xs:element": Object {
+          "name": "TestElemet",
+          "properties": Object {
+            "xs:annotation": Object {
+              "properties": Object {
+                "xs:documentation": Object {
+                  "default": "Complex test element",
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+          },
+          "type": "TestElement_Struct",
+        },
+        "xs:simpleType": Object {
+          "items": Object {
+            "name": "DefsId_Type",
+            "properties": Object {
+              "xs:annotation": Object {
+                "properties": Object {
+                  "xs:documentation": Object {
+                    "default": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus delectus aliquam corporis quos molestiae quasi facilis eum accusantium sed quaerat nisi, odit nostrum dolor, aspernatur deserunt, voluptates similique tenetur architecto!",
+                    "type": "string",
+                  },
+                },
+                "type": "object",
+              },
+              "xs:restriction": Object {
+                "base": "xs:string",
+                "properties": Object {
+                  "xs:maxLength": Object {
+                    "properties": Object {},
+                    "type": "object",
+                    "value": "3",
+                  },
+                },
+                "type": "object",
+              },
+            },
+            "type": "object",
+          },
+          "type": "array",
+        },
+      },
+      "type": "object",
+      "xmlns:xs": "http://www.w3.org/2001/XMLSchema",
+    },
+  },
+  "type": "object",
+}
+`;
+
+exports[`Parse complex content xsd2jsonSchema 1`] = `
+Object {
+  "properties": Object {
+    "TestElemet": Object {
+      "properties": Object {
+        "ComplexField2": Object {
+          "properties": Object {
+            "DefsId": Object {
+              "maxLength": "3",
+              "type": "string",
+            },
+            "DepartId": Object {
+              "type": "long",
+            },
+            "ShortCodeField": Object {
+              "maxLength": "4",
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "MidCketysqDate": Object {
+          "type": "date",
+        },
+        "MidCketysqQPwo": Object {
+          "properties": Object {
+            "Alks": Object {
+              "type": "long",
+            },
+            "Eiwo": Object {
+              "type": "long",
+            },
+            "Ruty": Object {
+              "type": "long",
+            },
+          },
+          "type": "object",
+        },
+        "MidCnfhibqQPwo": Object {
+          "properties": Object {
+            "Alks": Object {
+              "type": "long",
+            },
+            "Eiwo": Object {
+              "type": "long",
+            },
+            "Ruty": Object {
+              "type": "long",
+            },
+          },
+          "type": "object",
+        },
+        "MidLtncrbqQPwo": Object {
+          "items": Object {
+            "properties": Object {
+              "Gjljlb": Object {
+                "type": "boolean",
+              },
+              "Surei": Object {
+                "properties": Object {
+                  "Alks": Object {
+                    "type": "long",
+                  },
+                  "Eiwo": Object {
+                    "type": "long",
+                  },
+                  "Ruty": Object {
+                    "type": "long",
+                  },
+                },
+                "type": "object",
+              },
+            },
+            "type": "object",
+          },
+          "type": "array",
+        },
+        "SomeId": Object {
+          "maxLength": "36",
+          "type": "string",
+        },
+        "SomeIdVariation": Object {
+          "pattern": "([0-9]|[A-F]){48}",
+          "type": "string",
+        },
+        "SomeName": Object {
+          "maxLength": "36",
+          "type": "string",
+        },
+      },
+      "type": "object",
+    },
+  },
+  "type": "object",
+}
+`;
+
+exports[`Parse xsd array 1`] = `
+Object {
+  "properties": Object {
+    "TestElemet": Object {
+      "properties": Object {
+        "Ch2": Object {
+          "properties": Object {
+            "ChSrv": Object {
+              "items": Object {
+                "properties": Object {
+                  "Srv": Object {
+                    "type": "long",
+                  },
+                  "Wdt": Object {
+                    "maxLength": "4000",
+                    "type": "string",
+                  },
+                },
+                "type": "object",
+              },
+              "type": "array",
+            },
+            "Srv": Object {
+              "type": "long",
+            },
+            "Wdt": Object {
+              "maxLength": "4000",
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "ChSrv": Object {
+          "items": Object {
+            "properties": Object {
+              "Srv": Object {
+                "type": "long",
+              },
+              "Wdt": Object {
+                "maxLength": "4000",
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+          "type": "array",
+        },
+        "Dt": Object {
+          "type": "date",
+        },
+        "Dt2": Object {
+          "type": "date",
+        },
+        "Rdg": Object {
+          "maxLength": "64",
+          "type": "string",
+        },
+        "Rdt": Object {
+          "maximum": 100,
+          "minimum": 0,
+          "type": "integer",
+        },
+      },
+      "type": "object",
+    },
+  },
+  "type": "object",
+}
+`;
+
+exports[`Parse xsd extention 1`] = `
+Object {
+  "properties": Object {
+    "TestElemet": Object {
+      "properties": Object {
+        "DateGFwp": Object {
+          "type": "date",
+        },
+        "Fsap": Object {
+          "maxLength": "64",
+          "type": "string",
+        },
+        "Npwfd": Object {
+          "maxLength": "4000",
+          "type": "string",
+        },
+        "Prasd": Object {
+          "properties": Object {
+            "Apwoe": Object {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer",
+            },
+            "Ghbdtn": Object {
+              "pattern": "([0-9]|[A-F]){48}",
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+      },
+      "type": "object",
+    },
+  },
+  "type": "object",
+}
+`;
+
+exports[`Parse xsd restrictions 1`] = `
+Object {
+  "properties": Object {
+    "TestElemet": Object {
+      "properties": Object {
+        "Hps": Object {
+          "type": "long",
+        },
+        "SFwsdf": Object {
+          "maxLength": "4000",
+          "type": "string",
+        },
+        "SFwsdf2": Object {
+          "maxLength": "5000",
+          "type": "string",
+        },
+        "Unc": Object {
+          "pattern": "([0-9]|[A-F]){48}",
+          "type": "string",
+        },
+        "Xfw": Object {
+          "type": "date",
+        },
+      },
+      "type": "object",
+    },
+  },
+  "type": "object",
+}
+`;

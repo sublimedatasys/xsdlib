@@ -4,8 +4,29 @@
   "description": "Xml Schema Library",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "start": "node index.js"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!<rootDir>/node_modules/"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 90,
+        "functions": 90,
+        "lines": 90,
+        "statements": 90
+      }
+    },
+    "coverageReporters": [
+      "text"
+    ],
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ]
   },
   "repository": {
     "type": "git",
@@ -37,7 +58,12 @@
     "xml-formatter": "^2.1.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-latest": "^6.24.1"
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.10",
+    "enzyme": "^3.11.0",
+    "enzyme-to-json": "^3.6.1",
+    "jest": "^26.6.3",
+    "jest-enzyme": "^7.1.2"
   }
 }
