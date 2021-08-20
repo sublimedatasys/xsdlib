@@ -1,7 +1,5 @@
 import fs from "fs";
-import beautify from 'json-beautify';
-import { json2xml } from '../json2xml';
-const { xsd2jsonSchema, json2xsd, jsonSchema2xsd, xml2xsd, xml2json } = require('../')
+const { xsd2jsonSchema, xml2json } = require('../')
 
 const readModuleFile = (
   path,
@@ -16,7 +14,7 @@ const readModuleFile = (
 };
 
 it("Parse complex content xml2json", (done) => {
-  readModuleFile("./XsdData.xsd", (err, xsdText) => {
+  readModuleFile("./XsdData.xsd", (_err, xsdText) => {
     const jsonO = xml2json(xsdText)
     expect(JSON.parse(jsonO)).toMatchSnapshot();
     done();
@@ -295,4 +293,64 @@ it("Parse complex content xsd2jsonSchema", (done) => {
     expect(JSON.parse(jsonO)).toMatchSnapshot();
     done();
   });
+});
+
+it('Parse xsd has no complex types', () => {
+	const jsonO = xsd2jsonSchema(`
+  	<?xml version="1.0" encoding="UTF-8"?>
+	<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	  <xs:element name="TestElemet" type="SomeIdVariation48_Type">
+	  </xs:element>
+	  <xs:simpleType name="SomeIdVariation48_Type">
+		  <xs:restriction base="xs:string">
+			  <xs:pattern value="[0-9]{4}"/>
+		  </xs:restriction>
+	  </xs:simpleType>
+	</xs:schema>
+  `)
+	expect(JSON.parse(jsonO)).toMatchSnapshot();
+});
+
+it('Parse xsd pattern extra escaping characters dot', () => {
+	  const jsonO = xsd2jsonSchema(`
+		<?xml version="1.0" encoding="UTF-8"?>
+	  <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+		<xs:element name="TestElemet" type="SomeIdVariation48_Type">
+		</xs:element>
+		<xs:complexType name="Ch_struct2">
+			<xs:sequence>
+				<xs:element name="Wdt" type="xs:string">
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+		<xs:simpleType name="SomeIdVariation48_Type">
+			<xs:restriction base="xs:string">
+				<xs:pattern value="(\\.[0-9]{3})?"/>
+			</xs:restriction>
+		</xs:simpleType>
+	  </xs:schema>
+	`)
+	  expect(JSON.parse(jsonO)).toMatchSnapshot();
+});
+
+it('Parse xsd pattern extra escaping characters plus', () => {
+	  const jsonO = xsd2jsonSchema(`
+		<?xml version="1.0" encoding="UTF-8"?>
+	  <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+		<xs:element name="TestElemet" type="SomeIdVariation48_Type">
+		</xs:element>
+		<xs:complexType name="Ch_struct2">
+			<xs:sequence>
+				<xs:element name="Wdt" type="xs:string">
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+		<xs:simpleType name="SomeIdVariation48_Type">
+			<xs:restriction base="xs:string">
+				<xs:pattern value="((-|\\+)[0-9]{2}:[0-9]{2})?)?)?"/>
+			</xs:restriction>
+		</xs:simpleType>
+	  </xs:schema>
+	`)
+	  expect(JSON.parse(jsonO)).toMatchSnapshot();
 });
