@@ -349,7 +349,7 @@ const generateSimpleContent = (d, coma = false, restrictions = []) => {
       if (maxLength) attrJson += `,"maxLength":"${maxLength}"`
       if (minInclusive) attrJson += `,"minimum":${minInclusive}`
       if (maxInclusive) attrJson += `,"maximum":${maxInclusive}`
-      if (pattern) attrJson += `,"pattern":"${pattern}"`
+      if (pattern) attrJson += `,"pattern":"${pattern.split('\\.').join('.').split('\\+').join('+')}"`
     }
   }
   jsonString += `"${d.attribute_name}":{"type":"${type.replace('xs:', '')}"${attrJson}}${coma ? ',' : ''}`
@@ -577,13 +577,15 @@ const simplifyJson = (jsonObj) => {
     if (complexTypes && !complexTypes.length) complexTypes = [complexTypes]
     if (simpleTypes && !simpleTypes.length) simpleTypes = [simpleTypes]
 
-    complexTypes.forEach((d) => {
-      if (d.attribute_name === nametype) {
-        // delete d.attribute_name
-        itemObj = d
-        itemKey = 'xs:complexType'
-      }
-    })
+    if (!itemObj && complexTypes && complexTypes.length) {
+      complexTypes.forEach((d) => {
+        if (d.attribute_name === nametype) {
+          // delete d.attribute_name
+          itemObj = d
+          itemKey = 'xs:complexType'
+        }
+      })
+    }
 
     if (!itemObj && simpleTypes && simpleTypes.length) {
       simpleTypes.forEach((d) => {
